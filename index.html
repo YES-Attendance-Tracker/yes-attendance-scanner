@@ -145,16 +145,17 @@
 
             <h2>Attendance Scanner</h2>
 
-            <p id="welcomeMessage">
+<p id="welcomeMessage">
     Welcome, Officer!
 </p>
 
 <div class="scanner-box">
     <div id="reader"></div>
+</div>
 
-    <p id="scanMessage">
-        Point the camera at a student's QR code.
-    </p>
+<p id="scanMessage">
+    Point the camera at a student's QR code.
+</p>
 </div>
 
             <div class="status" id="scanStatus"></div>
@@ -217,37 +218,7 @@ function startScanner() {
 
     const scanner = new Html5Qrcode("reader");
 
-    scanner.start(
-        { facingMode: "environment" },
-
-        {
-            fps: 10,
-            qrbox: {
-                width: 250,
-                height: 250
-            }
-        },
-
-        function(decodedText) {
-
-    console.log("QR Code detected:", decodedText);
-
-    // The QR contains a URL.
-    // The student ID is the last part of the URL.
-const studentId = decodedText
-    .trim()
-    .split("/")
-    .pop();
-
-console.log("FULL QR:", decodedText);
-console.log("EXTRACTED STUDENT ID:", studentId);
-
-document.getElementById("scanMessage").innerText =
-    "QR detected:\n\n" +
-    decodedText +
-    "\n\nExtracted ID:\n" +
-    studentId;
-function startScanner() {
+    scanner.start(function startScanner() {
 
     const scanner = new Html5Qrcode("reader");
 
@@ -266,38 +237,40 @@ function startScanner() {
 
             console.log("QR Code detected:", decodedText);
 
+            // The QR contains a URL.
+            // For now, show exactly what was scanned
+            // and what we extract from it.
+
+            const studentId = decodedText
+                .trim()
+                .split("/")
+                .pop();
+
+            console.log("FULL QR:", decodedText);
+            console.log("EXTRACTED STUDENT ID:", studentId);
+
             document.getElementById("scanMessage").innerText =
-                "QR detected. Checking attendance...";
+                "QR detected:\n\n" +
+                decodedText +
+                "\n\nExtracted ID:\n" +
+                studentId;
 
             scanner.stop().then(function() {
 
-                sendAttendance(decodedText);
+                console.log("Ready to inspect the extracted ID.");
 
             }).catch(function(error) {
 
                 console.error("Could not stop scanner:", error);
-
-                sendAttendance(decodedText);
 
             });
 
         },
 
         function(errorMessage) {
+
             // Normal scanning errors are ignored.
-        }
 
-    ).catch(function(error) {
-
-        console.error("Camera error:", error);
-
-        document.getElementById("scanMessage").innerText =
-            "Unable to access the camera. Please allow camera access.";
-
-    });
-}
-        function(errorMessage) {
-            // Normal scanning errors are ignored.
         }
 
     ).catch(function(error) {

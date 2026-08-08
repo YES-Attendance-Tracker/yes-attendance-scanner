@@ -2,121 +2,118 @@
 <html>
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>YES Attendance Scanner</title>
+<title>YES Attendance Scanner</title>
 
-    <!-- Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-    <!-- QR Scanner -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<style>
 
-    <style>
+* {
+    box-sizing: border-box;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            color: #1f2937;
-        }
+.header {
+    background: #0b4f9c;
+    color: white;
+    padding: 25px 20px;
+    text-align: center;
+}
 
-        .header {
-            background: #0b4f9c;
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-        }
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+}
 
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
+.header p {
+    margin: 8px 0 0;
+    font-size: 15px;
+}
 
-        .header p {
-            margin: 8px 0 0;
-            font-size: 15px;
-        }
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+}
 
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-        }
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 35px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
 
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 35px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            text-align: center;
-        }
+.card h2 {
+    margin-bottom: 10px;
+}
 
-        .card h2 {
-            margin-bottom: 10px;
-        }
+.card p {
+    color: #6b7280;
+    line-height: 1.5;
+}
 
-        .card p {
-            color: #6b7280;
-            line-height: 1.5;
-        }
+#googleButton {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
 
-        #googleButton {
-            display: flex;
-            justify-content: center;
-            margin-top: 25px;
-        }
+.scanner-section {
+    display: none;
+}
 
-        .scanner-section {
-            display: none;
-        }
+#reader {
+    width: 100%;
+    max-width: 450px;
+    margin: 25px auto;
+}
 
-        #reader {
-            width: 100%;
-            max-width: 450px;
-            margin: 25px auto;
-        }
+.scanner-box {
+    margin: 25px auto;
+    padding: 15px;
+    border: 2px dashed #0b4f9c;
+    border-radius: 12px;
+}
 
-        .scanner-box {
-            margin: 25px auto;
-            padding: 15px;
-            border: 2px dashed #0b4f9c;
-            border-radius: 12px;
-            color: #0b4f9c;
-        }
+#scanMessage {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
 
-        #scanMessage {
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
+.logout-button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-top: 20px;
+}
 
-        .logout-button {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 7px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+footer {
+    text-align: center;
+    color: #6b7280;
+    font-size: 13px;
+    padding: 20px;
+}
 
-        footer {
-            text-align: center;
-            color: #6b7280;
-            font-size: 13px;
-            padding: 20px;
-        }
-
-    </style>
+</style>
 
 </head>
 
 <body>
+
 
 <header class="header">
 
@@ -132,59 +129,59 @@
 <main class="container">
 
 
-    <!-- LOGIN SECTION -->
+<!-- LOGIN SECTION -->
 
-    <section class="card" id="loginSection">
+<section class="card" id="loginSection">
 
-        <h2>
-            Attendance Officer Access
-        </h2>
+    <h2>
+        Attendance Officer Access
+    </h2>
 
-        <p>
-            Sign in using your authorized VSU Google account
-            to access the attendance scanner.
-        </p>
+    <p>
+        Sign in using your authorized VSU Google account
+        to access the attendance scanner.
+    </p>
 
-        <div id="googleButton"></div>
+    <div id="googleButton"></div>
 
-    </section>
-
-
-
-    <!-- SCANNER SECTION -->
-
-    <section class="card scanner-section" id="scannerSection">
-
-        <h2>
-            Attendance Scanner
-        </h2>
-
-        <p id="welcomeMessage">
-            Welcome, Officer!
-        </p>
+</section>
 
 
-        <div class="scanner-box">
 
-            <div id="reader"></div>
+<!-- SCANNER SECTION -->
 
-        </div>
+<section class="card scanner-section" id="scannerSection">
+
+    <h2>
+        Attendance Scanner
+    </h2>
+
+    <p id="welcomeMessage">
+        Welcome, Officer!
+    </p>
 
 
-        <p id="scanMessage">
-            Point the camera at a student's QR code.
-        </p>
+    <div class="scanner-box">
+
+        <div id="reader"></div>
+
+    </div>
 
 
-        <button
-            class="logout-button"
-            onclick="logout()">
+    <p id="scanMessage">
+        Point the camera at a student's QR code.
+    </p>
 
-            Sign Out
 
-        </button>
+    <button
+        class="logout-button"
+        onclick="logout()">
 
-    </section>
+        Sign Out
+
+    </button>
+
+</section>
 
 
 </main>
@@ -203,24 +200,24 @@
 
 /* =========================================================
    SETTINGS
-   ========================================================= */
-
+========================================================= */
 
 const CLIENT_ID =
-    "69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
+"69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
 
 
 const BACKEND_URL =
-    "https://script.google.com/macros/s/AKfycbzpj5BrUy0tlF7ODwGJCf4LXG5JkRXXbt25vhNz7bS9jHg9eVV5NOeuAfwRk9Oo3Y0-/exec";
-
-
-/* =========================================================
-   GOOGLE LOGIN
-   ========================================================= */
+"https://script.google.com/macros/s/AKfycbzpj5BrUy0tlF7ODwGJCf4LXG5JkRXXbt25vhNz7bS9jHg9eVV5NOeuAfwRk9Oo3Y0-/exec";
 
 
 let googleIdToken = null;
 
+let qrScanner = null;
+
+
+/* =========================================================
+   GOOGLE SIGN-IN
+========================================================= */
 
 function handleCredentialResponse(response) {
 
@@ -229,15 +226,11 @@ function handleCredentialResponse(response) {
     googleIdToken = response.credential;
 
 
-    /*
-     * Decode the token only for displaying
-     * the officer's name and email.
-     */
-
     try {
 
         const parts =
             googleIdToken.split(".");
+
 
         const payload =
             JSON.parse(
@@ -274,7 +267,10 @@ function handleCredentialResponse(response) {
                 ")";
 
 
-        console.log("Signed-in email:", email);
+        console.log(
+            "Signed-in email:",
+            email
+        );
 
 
         startScanner();
@@ -284,7 +280,7 @@ function handleCredentialResponse(response) {
     catch (error) {
 
         console.error(
-            "Could not read Google credential:",
+            "Google credential error:",
             error
         );
 
@@ -300,34 +296,13 @@ function handleCredentialResponse(response) {
 
 /* =========================================================
    QR SCANNER
-   ========================================================= */
-
-
-let qrScanner = null;
-
+========================================================= */
 
 function startScanner() {
 
-    console.log("Starting QR scanner...");
-
-
-    if (qrScanner !== null) {
-
-        try {
-
-            qrScanner.clear();
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "Previous scanner already cleared."
-            );
-
-        }
-
-    }
+    console.log(
+        "Starting QR scanner..."
+    );
 
 
     qrScanner =
@@ -339,7 +314,6 @@ function startScanner() {
         {
             facingMode: "environment"
         },
-
 
         {
             fps: 10,
@@ -360,74 +334,107 @@ function startScanner() {
             );
 
 
-            /*
-             * IMPORTANT:
-             *
-             * We know your QR contains a
-             * Google Apps Script URL.
-             *
-             * For now, we are NOT sending
-             * anything to the backend.
-             *
-             * We are only showing the URL
-             * and the value at its end.
-             */
-
-
             const cleanQR =
                 decodedText.trim();
 
 
-            const url = new URL(cleanQR);
+            let extractedID;
 
-            const extractedID =
-                url.searchParams.get("id");
+
+            try {
+
+                const url =
+                    new URL(cleanQR);
+
+
+                extractedID =
+                    url.searchParams.get("id");
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "QR is not a valid URL:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "scanMessage"
+                ).innerText =
+                    "Invalid QR code.";
+
+
+                return;
+
+            }
+
+
+            if (!extractedID) {
+
+                document.getElementById(
+                    "scanMessage"
+                ).innerText =
+                    "Student ID could not be found in QR code.";
+
+
+                return;
+
+            }
 
 
             console.log(
-                "EXTRACTED ID:",
+                "EXTRACTED STUDENT ID:",
                 extractedID
             );
 
 
-            document.getElementById("scanMessage")
-                .innerText =
-                     "QR detected. Checking attendance...";
+            document.getElementById(
+                "scanMessage"
+            ).innerText =
+                "QR detected.\n\n" +
+                "Student ID: " +
+                extractedID +
+                "\n\n" +
+                "Checking attendance...";
 
-
-            /*
-             * Stop the scanner so it doesn't
-             * scan the same QR repeatedly.
-             */
 
             qrScanner.stop()
 
-               .then(function() {
+                .then(function() {
 
-                   console.log("Scanner stopped.");
+                    console.log(
+                        "Scanner stopped."
+                    );
 
-                   sendAttendance(extractedID);
 
-    })
+                    sendAttendance(
+                        extractedID
+                    );
 
-    .catch(function(error) {
+                })
 
-        console.error(
-            "Could not stop scanner:",
-            error
-        );
+                .catch(function(error) {
 
-        sendAttendance(extractedID);
+                    console.error(
+                        "Could not stop scanner:",
+                        error
+                    );
 
-    });
+
+                    sendAttendance(
+                        extractedID
+                    );
+
+                });
+
+        },
 
 
         function(errorMessage) {
 
-            /*
-             * Normal QR scanning errors
-             * are ignored.
-             */
+            // Normal scanning errors are ignored.
 
         }
 
@@ -441,12 +448,11 @@ function startScanner() {
         );
 
 
-        document.getElementById("scanMessage")
-            .innerText =
-
-                "Unable to access the camera.\n\n" +
-
-                "Please allow camera access.";
+        document.getElementById(
+            "scanMessage"
+        ).innerText =
+            "Unable to access the camera.\n\n" +
+            "Please allow camera access.";
 
     });
 
@@ -455,55 +461,136 @@ function startScanner() {
 
 
 /* =========================================================
-   LOGOUT
-   ========================================================= */
+   SEND ATTENDANCE TO APPS SCRIPT
+========================================================= */
+
+function sendAttendance(studentId) {
 
 
-function logout() {
+    if (!googleIdToken) {
 
+        document.getElementById(
+            "scanMessage"
+        ).innerText =
+            "Please sign in again.";
 
-    if (qrScanner !== null) {
-
-        qrScanner.stop()
-
-            .then(function() {
-
-                console.log(
-                    "Scanner stopped."
-                );
-
-            })
-
-            .catch(function(error) {
-
-                console.log(
-                    "Scanner was not running."
-                );
-
-            });
+        return;
 
     }
 
 
-    googleIdToken = null;
+    fetch(
+
+        BACKEND_URL,
+
+        {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "text/plain;charset=utf-8"
+
+            },
+
+            body: JSON.stringify({
+
+                studentId:
+                    studentId.trim(),
+
+                idToken:
+                    googleIdToken
+
+            })
+
+        }
+
+    )
 
 
-    document.getElementById("scannerSection")
-        .style.display = "none";
+    .then(function(response) {
+
+        return response.json();
+
+    })
 
 
-    document.getElementById("loginSection")
-        .style.display = "block";
+    .then(function(result) {
+
+        console.log(
+            "Backend response:",
+            result
+        );
 
 
-    document.getElementById("googleButton")
-        .innerHTML = "";
+        if (result.success) {
 
 
-    google.accounts.id.disableAutoSelect();
+            document.getElementById(
+                "scanMessage"
+            ).innerText =
+
+                "✓ Attendance recorded!\n\n" +
+
+                result.student.name +
+                "\n" +
+
+                result.student.id +
+                "\n" +
+
+                result.date +
+                " " +
+
+                result.time;
 
 
-    renderGoogleButton();
+        }
+
+        else {
+
+
+            document.getElementById(
+                "scanMessage"
+            ).innerText =
+
+                "⚠ " +
+                result.message;
+
+        }
+
+
+        setTimeout(function() {
+
+            startScanner();
+
+        }, 2500);
+
+
+    })
+
+
+    .catch(function(error) {
+
+        console.error(
+            "Backend error:",
+            error
+        );
+
+
+        document.getElementById(
+            "scanMessage"
+        ).innerText =
+            "Unable to connect to the attendance server.";
+
+
+        setTimeout(function() {
+
+            startScanner();
+
+        }, 2500);
+
+    });
 
 }
 
@@ -511,8 +598,7 @@ function logout() {
 
 /* =========================================================
    GOOGLE BUTTON
-   ========================================================= */
-
+========================================================= */
 
 function renderGoogleButton() {
 
@@ -526,7 +612,7 @@ function renderGoogleButton() {
     if (!button) {
 
         console.error(
-            "googleButton element not found."
+            "Google button container not found."
         );
 
         return;
@@ -562,9 +648,8 @@ function renderGoogleButton() {
 
 
 /* =========================================================
-   PAGE INITIALIZATION
-   ========================================================= */
-
+   INITIALIZE PAGE
+========================================================= */
 
 window.onload = function() {
 
@@ -591,7 +676,8 @@ window.onload = function() {
 
     google.accounts.id.initialize({
 
-        client_id: CLIENT_ID,
+        client_id:
+            CLIENT_ID,
 
         callback:
             handleCredentialResponse
@@ -604,8 +690,49 @@ window.onload = function() {
 };
 
 
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout() {
+
+
+    if (qrScanner) {
+
+        qrScanner.stop()
+
+            .catch(function() {
+
+                // Scanner already stopped.
+
+            });
+
+    }
+
+
+    googleIdToken = null;
+
+
+    document.getElementById(
+        "scannerSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "loginSection"
+    ).style.display = "block";
+
+
+    google.accounts.id.disableAutoSelect();
+
+
+    renderGoogleButton();
+
+}
+
+
 </script>
 
 </body>
-
 </html>

@@ -179,8 +179,38 @@
 
 
         // Google Sign-In callback
-        function handleCredentialResponse(response) {
-            function startScanner() {
+function handleCredentialResponse(response) {
+
+    console.log("Google sign-in successful.");
+
+    const credential = response.credential;
+
+    // Decode the Google ID token payload for display only.
+    const payload = JSON.parse(
+        atob(
+            credential.split(".")[1]
+                .replace(/-/g, "+")
+                .replace(/_/g, "/")
+        )
+    );
+
+    const name = payload.name;
+    const email = payload.email;
+
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("scannerSection").style.display = "block";
+
+    document.getElementById("welcomeMessage").innerText =
+        "Signed in as: " + name + " (" + email + ")";
+
+    console.log("Signed-in email:", email);
+
+    startScanner();
+}
+
+
+// QR Scanner
+function startScanner() {
 
     const scanner = new Html5Qrcode("reader");
 
@@ -216,52 +246,19 @@
 
         function(errorMessage) {
 
-            // Ignore normal scanning errors.
+            // Normal scanning errors are ignored.
+
         }
-    )
-    .catch(function(error) {
+
+    ).catch(function(error) {
 
         console.error("Camera error:", error);
 
         document.getElementById("scanMessage").innerText =
             "Unable to access the camera. Please allow camera access.";
+
     });
 }
-
-            console.log("Google sign-in successful.");
-
-            /*
-             * For now, we are only testing Google authentication.
-             *
-             * We will NOT trust this information for officer
-             * authorization yet.
-             *
-             * The next step will send the Google credential
-             * to our Apps Script backend for verification.
-             */
-
-            const credential = response.credential;
-
-            // Decode the Google ID token payload for display only.
-            const payload = JSON.parse(
-                atob(credential.split(".")[1]
-                    .replace(/-/g, "+")
-                    .replace(/_/g, "/"))
-            );
-
-            const name = payload.name;
-            const email = payload.email;
-
-            document.getElementById("loginSection").style.display = "none";
-            document.getElementById("scannerSection").style.display = "block";
-
-            document.getElementById("welcomeMessage").innerText =
-                "Signed in as: " + name + " (" + email + ")";
-
-            console.log("Signed-in email:", email);
-            startScanner();
-        }
-
 
         // Initialize Google Sign-In
         window.onload = function () {

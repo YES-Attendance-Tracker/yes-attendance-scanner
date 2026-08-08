@@ -146,8 +146,8 @@
             <h2>Attendance Scanner</h2>
 
             <p id="welcomeMessage">
-                Welcome, Officer!
-            </p>
+    Welcome, Officer!
+</p>
 
 <div class="scanner-box">
     <div id="reader"></div>
@@ -176,6 +176,8 @@
 
         const CLIENT_ID =
             "69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
+        const BACKEND_URL =
+    "https://script.google.com/macros/s/AKfycbzpj5BrUy0tlF7ODwGJCf4LXG5JkRXXbt25vhNz7bS9jHg9eVV5NOeuAfwRk9Oo3Y0-/exec";
 
 
         // Google Sign-In callback
@@ -185,6 +187,7 @@ function handleCredentialResponse(response) {
 
     const credential = response.credential;
 
+window.googleIdToken = credential;
     // Decode the Google ID token payload for display only.
     const payload = JSON.parse(
         atob(
@@ -230,24 +233,24 @@ function startScanner() {
             console.log("QR Code detected:", decodedText);
 
             document.getElementById("scanMessage").innerText =
-                "QR detected: " + decodedText;
+                "QR detected. Checking attendance...";
 
             scanner.stop().then(function() {
 
-                console.log("Scanner stopped.");
+                sendAttendance(decodedText);
 
             }).catch(function(error) {
 
                 console.error("Could not stop scanner:", error);
+
+                sendAttendance(decodedText);
 
             });
 
         },
 
         function(errorMessage) {
-
             // Normal scanning errors are ignored.
-
         }
 
     ).catch(function(error) {
@@ -256,6 +259,92 @@ function startScanner() {
 
         document.getElementById("scanMessage").innerText =
             "Unable to access the camera. Please allow camera access.";
+
+    });
+}
+        function sendAttendance(studentId) {
+
+    if (!window.googleIdToken) {
+
+        document.getElementById("scanMessage").innerText =
+            "Please sign in again.";
+
+        return;
+    }
+
+
+    fetch(BACKEND_URL, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+
+            studentId: studentId.trim(),
+
+            idToken: window.googleIdToken
+
+        })
+
+    })
+
+    .then(function(response) {
+
+        return response.json();
+
+    })
+
+    .then(function(result) {
+
+        console.log("Backend response:", result);
+
+
+        if (result.success) {
+
+            document.getElementById("scanMessage").innerText =
+                "✓ Attendance recorded!\n\n" +
+                result.student.name +
+                "\n" +
+                result.student.id +
+                "\n" +
+                result.date +
+                " " +
+                result.time;
+
+
+        } else {
+
+            document.getElementById("scanMessage").innerText =
+                "⚠ " + result.message;
+
+        }
+
+
+        // Start scanner again after a short delay.
+
+        setTimeout(function() {
+
+            startScanner();
+
+        }, 2500);
+
+    })
+
+    .catch(function(error) {
+
+        console.error("Backend error:", error);
+
+        document.getElementById("scanMessage").innerText =
+            "Unable to connect to the attendance server.";
+
+        setTimeout(function() {
+
+            startScanner();
+
+        }, 2500);
 
     });
 }

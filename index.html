@@ -230,24 +230,33 @@ function startScanner() {
 
         function(decodedText) {
 
-            console.log("QR Code detected:", decodedText);
+    console.log("QR Code detected:", decodedText);
 
-document.getElementById("scanMessage").innerText =
-    "QR detected: [" + decodedText + "]";
+    // The QR contains a URL.
+    // The student ID is the last part of the URL.
+    const studentId = decodedText
+        .trim()
+        .split("/")
+        .pop();
 
-            scanner.stop().then(function() {
+    console.log("Student ID extracted:", studentId);
 
-                sendAttendance(decodedText);
+    document.getElementById("scanMessage").innerText =
+        "QR detected. Checking attendance...";
 
-            }).catch(function(error) {
+    scanner.stop().then(function() {
 
-                console.error("Could not stop scanner:", error);
+        sendAttendance(studentId);
 
-                sendAttendance(decodedText);
+    }).catch(function(error) {
 
-            });
+        console.error("Could not stop scanner:", error);
 
-        },
+        sendAttendance(studentId);
+
+    });
+
+},
 
         function(errorMessage) {
             // Normal scanning errors are ignored.

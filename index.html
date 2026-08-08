@@ -378,8 +378,10 @@ function startScanner() {
                 decodedText.trim();
 
 
-            const pieces =
-                cleanQR.split("/");
+           const url = new URL(cleanQR);
+
+        const extractedID =
+    url.searchParams.get("id");
 
 
             const extractedID =

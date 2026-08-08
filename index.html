@@ -7,10 +7,18 @@
 
 <title>YES Attendance Scanner</title>
 
+<!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- QR Scanner -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
+
 <style>
+
+/* =========================================================
+   GENERAL
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -18,106 +26,285 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f7fb;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef4fb;
     color: #1f2937;
 }
 
+
+/* =========================================================
+   HEADER
+========================================================= */
+
 .header {
-    background: #0b4f9c;
+    background: linear-gradient(135deg, #0b4f9c, #1769c2);
     color: white;
-    padding: 25px 20px;
+    padding: 30px 20px;
     text-align: center;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
 }
 
 .header h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 30px;
+    font-weight: 700;
 }
 
 .header p {
     margin: 8px 0 0;
     font-size: 15px;
+    opacity: 0.9;
 }
 
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
 .container {
-    max-width: 600px;
-    margin: 40px auto;
+    max-width: 620px;
+    margin: 35px auto;
     padding: 20px;
 }
 
+
+/* =========================================================
+   CARD
+========================================================= */
+
 .card {
     background: white;
-    border-radius: 15px;
-    padding: 35px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border-radius: 18px;
+    padding: 35px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     text-align: center;
 }
 
-.card h2 {
-    margin-bottom: 10px;
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.login-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e7f0fc;
+    color: #0b4f9c;
+
+    border-radius: 50%;
+
+    font-size: 32px;
 }
 
-.card p {
-    color: #6b7280;
-    line-height: 1.5;
+.card h2 {
+    margin: 0 0 10px;
+    color: #123b68;
+    font-size: 24px;
 }
+
+.card-description {
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+
+/* =========================================================
+   GOOGLE BUTTON
+========================================================= */
 
 #googleButton {
     display: flex;
     justify-content: center;
-    margin-top: 25px;
+    margin-top: 20px;
 }
+
+
+/* =========================================================
+   SCANNER
+========================================================= */
 
 .scanner-section {
     display: none;
 }
 
-#reader {
-    width: 100%;
-    max-width: 450px;
-    margin: 25px auto;
+.officer-badge {
+    display: inline-block;
+
+    background: #e7f0fc;
+    color: #0b4f9c;
+
+    padding: 8px 15px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    margin-bottom: 10px;
 }
+
+
+/* =========================================================
+   SCANNER BOX
+========================================================= */
 
 .scanner-box {
     margin: 25px auto;
+
     padding: 15px;
-    border: 2px dashed #0b4f9c;
-    border-radius: 12px;
+
+    background: #f8fbff;
+
+    border: 2px solid #d7e5f5;
+
+    border-radius: 15px;
 }
+
+#reader {
+    width: 100%;
+    max-width: 450px;
+    margin: auto;
+}
+
+
+/* =========================================================
+   INSTRUCTIONS
+========================================================= */
+
+.scan-instruction {
+    font-size: 14px;
+    color: #6b7280;
+
+    margin: 15px 0;
+}
+
+
+/* =========================================================
+   STATUS MESSAGE
+========================================================= */
 
 #scanMessage {
     white-space: pre-wrap;
     word-break: break-word;
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background: #f4f8fd;
+
+    border-radius: 10px;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    line-height: 1.5;
 }
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
 
 .logout-button {
     background: #dc2626;
     color: white;
+
     border: none;
-    padding: 10px 20px;
-    border-radius: 7px;
+
+    padding: 11px 22px;
+
+    border-radius: 8px;
+
     cursor: pointer;
-    margin-top: 20px;
+
+    margin-top: 22px;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    transition: 0.2s;
 }
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
 
 footer {
     text-align: center;
+
     color: #6b7280;
+
     font-size: 13px;
-    padding: 20px;
+
+    padding: 25px 20px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .header {
+        padding: 25px 15px;
+    }
+
+    .header h1 {
+        font-size: 25px;
+    }
+
+    .container {
+        margin: 20px auto;
+        padding: 12px;
+    }
+
+    .card {
+        padding: 28px 18px;
+        border-radius: 15px;
+    }
+
+    .card h2 {
+        font-size: 21px;
+    }
+
+    #reader {
+        max-width: 100%;
+    }
+
 }
 
 </style>
 
 </head>
 
+
 <body>
 
 
+<!-- =======================================================
+     HEADER
+======================================================== -->
+
 <header class="header">
 
-    <h1>YES Attendance Scanner</h1>
+    <h1>
+        YES Attendance Scanner
+    </h1>
 
     <p>
         Young Economists' Society
@@ -126,35 +313,59 @@ footer {
 </header>
 
 
+
 <main class="container">
 
 
-<!-- LOGIN SECTION -->
+<!-- =======================================================
+     LOGIN SECTION
+======================================================== -->
 
 <section class="card" id="loginSection">
+
+
+    <div class="login-icon">
+        🔐
+    </div>
+
 
     <h2>
         Attendance Officer Access
     </h2>
 
-    <p>
-        Sign in using your authorized VSU Google account
-        to access the attendance scanner.
+
+    <p class="card-description">
+
+        Sign in using your authorized
+        VSU Google account to access
+        the attendance scanner.
+
     </p>
 
+
     <div id="googleButton"></div>
+
 
 </section>
 
 
 
-<!-- SCANNER SECTION -->
+<!-- =======================================================
+     SCANNER SECTION
+======================================================== -->
 
 <section class="card scanner-section" id="scannerSection">
+
+
+    <div class="officer-badge">
+        ✓ AUTHORIZED OFFICER
+    </div>
+
 
     <h2>
         Attendance Scanner
     </h2>
+
 
     <p id="welcomeMessage">
         Welcome, Officer!
@@ -168,8 +379,17 @@ footer {
     </div>
 
 
+    <p class="scan-instruction">
+
+        📱 Point the camera at a student's QR code
+
+    </p>
+
+
     <p id="scanMessage">
-        Point the camera at a student's QR code.
+
+        Ready to scan attendance.
+
     </p>
 
 
@@ -181,10 +401,12 @@ footer {
 
     </button>
 
+
 </section>
 
 
 </main>
+
 
 
 <footer>
@@ -213,6 +435,7 @@ const BACKEND_URL =
 let googleIdToken = null;
 
 let qrScanner = null;
+
 
 
 /* =========================================================
@@ -267,10 +490,9 @@ function handleCredentialResponse(response) {
                 ")";
 
 
-        console.log(
-            "Signed-in email:",
-            email
-        );
+        document.getElementById("scanMessage")
+            .innerText =
+                "Ready to scan attendance.";
 
 
         startScanner();
@@ -300,9 +522,7 @@ function handleCredentialResponse(response) {
 
 function startScanner() {
 
-    console.log(
-        "Starting QR scanner..."
-    );
+    console.log("Starting QR scanner...");
 
 
     qrScanner =
@@ -376,18 +596,12 @@ function startScanner() {
                 document.getElementById(
                     "scanMessage"
                 ).innerText =
-                    "Student ID could not be found in QR code.";
+                    "Student ID could not be found.";
 
 
                 return;
 
             }
-
-
-            console.log(
-                "EXTRACTED STUDENT ID:",
-                extractedID
-            );
 
 
             document.getElementById(
@@ -461,7 +675,7 @@ function startScanner() {
 
 
 /* =========================================================
-   SEND ATTENDANCE TO APPS SCRIPT
+   SEND ATTENDANCE
 ========================================================= */
 
 function sendAttendance(studentId) {
@@ -508,13 +722,11 @@ function sendAttendance(studentId) {
 
     )
 
-
     .then(function(response) {
 
         return response.json();
 
     })
-
 
     .then(function(result) {
 
@@ -525,7 +737,6 @@ function sendAttendance(studentId) {
 
 
         if (result.success) {
-
 
             document.getElementById(
                 "scanMessage"
@@ -544,11 +755,9 @@ function sendAttendance(studentId) {
 
                 result.time;
 
-
         }
 
         else {
-
 
             document.getElementById(
                 "scanMessage"
@@ -565,7 +774,6 @@ function sendAttendance(studentId) {
             startScanner();
 
         }, 2500);
-
 
     })
 
@@ -648,7 +856,7 @@ function renderGoogleButton() {
 
 
 /* =========================================================
-   INITIALIZE PAGE
+   INITIALIZE
 ========================================================= */
 
 window.onload = function() {

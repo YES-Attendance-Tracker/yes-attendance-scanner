@@ -6,6 +6,9 @@
 
     <title>YES Attendance Scanner</title>
 
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -65,19 +68,10 @@
             line-height: 1.5;
         }
 
-        .login-button {
+        #googleButton {
+            display: flex;
+            justify-content: center;
             margin-top: 25px;
-            background: #0b4f9c;
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .login-button:hover {
-            background: #083d78;
         }
 
         .scanner-section {
@@ -97,6 +91,7 @@
             padding: 12px;
             border-radius: 8px;
             display: none;
+            background: #eef5ff;
         }
 
         .logout-button {
@@ -127,26 +122,24 @@
 
     <main class="container">
 
-        <!-- LOGIN -->
+        <!-- LOGIN SECTION -->
         <section class="card" id="loginSection">
 
             <h2>Attendance Officer Access</h2>
 
             <p>
-                Please sign in using your authorized Google account
+                Sign in using your authorized VSU Google account
                 to access the attendance scanner.
             </p>
 
-            <button class="login-button" onclick="startLogin()">
-                Sign in with Google
-            </button>
+            <div id="googleButton"></div>
 
             <div class="status" id="loginStatus"></div>
 
         </section>
 
 
-        <!-- SCANNER -->
+        <!-- SCANNER SECTION -->
         <section class="card scanner-section" id="scannerSection">
 
             <h2>Attendance Scanner</h2>
@@ -182,14 +175,67 @@
 
     <script>
 
-        function startLogin() {
+        const CLIENT_ID =
+            "69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
 
-            document.getElementById("loginStatus").style.display = "block";
 
-            document.getElementById("loginStatus").innerText =
-                "Google authentication will be connected here.";
+        // Google Sign-In callback
+        function handleCredentialResponse(response) {
 
+            console.log("Google sign-in successful.");
+
+            /*
+             * For now, we are only testing Google authentication.
+             *
+             * We will NOT trust this information for officer
+             * authorization yet.
+             *
+             * The next step will send the Google credential
+             * to our Apps Script backend for verification.
+             */
+
+            const credential = response.credential;
+
+            // Decode the Google ID token payload for display only.
+            const payload = JSON.parse(
+                atob(credential.split(".")[1]
+                    .replace(/-/g, "+")
+                    .replace(/_/g, "/"))
+            );
+
+            const name = payload.name;
+            const email = payload.email;
+
+            document.getElementById("loginSection").style.display = "none";
+            document.getElementById("scannerSection").style.display = "block";
+
+            document.getElementById("welcomeMessage").innerText =
+                "Signed in as: " + name + " (" + email + ")";
+
+            console.log("Signed-in email:", email);
         }
+
+
+        // Initialize Google Sign-In
+        window.onload = function () {
+
+            google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("googleButton"),
+                {
+                    theme: "outline",
+                    size: "large",
+                    text: "signin_with",
+                    shape: "rectangular",
+                    width: 280
+                }
+            );
+
+        };
 
 
         function logout() {
@@ -198,6 +244,20 @@
 
             document.getElementById("loginSection").style.display = "block";
 
+            document.getElementById("googleButton").innerHTML = "";
+
+            google.accounts.id.disableAutoSelect();
+
+            google.accounts.id.renderButton(
+                document.getElementById("googleButton"),
+                {
+                    theme: "outline",
+                    size: "large",
+                    text: "signin_with",
+                    shape: "rectangular",
+                    width: 280
+                }
+            );
         }
 
     </script>

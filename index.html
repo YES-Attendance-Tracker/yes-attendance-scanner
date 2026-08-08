@@ -232,8 +232,8 @@ function startScanner() {
 
             console.log("QR Code detected:", decodedText);
 
-            document.getElementById("scanMessage").innerText =
-                "QR detected. Checking attendance...";
+document.getElementById("scanMessage").innerText =
+    "QR detected: [" + decodedText + "]";
 
             scanner.stop().then(function() {
 

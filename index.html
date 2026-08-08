@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -8,9 +9,12 @@
 
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- QR Scanner -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -53,13 +57,6 @@
             text-align: center;
         }
 
-        .logo {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 15px;
-        }
-
         .card h2 {
             margin-bottom: 10px;
         }
@@ -79,20 +76,23 @@
             display: none;
         }
 
+        #reader {
+            width: 100%;
+            max-width: 450px;
+            margin: 25px auto;
+        }
+
         .scanner-box {
             margin: 25px auto;
-            padding: 50px 20px;
+            padding: 15px;
             border: 2px dashed #0b4f9c;
             border-radius: 12px;
             color: #0b4f9c;
         }
 
-        .status {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            display: none;
-            background: #eef5ff;
+        #scanMessage {
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .logout-button {
@@ -111,309 +111,514 @@
             font-size: 13px;
             padding: 20px;
         }
+
     </style>
+
 </head>
 
 <body>
 
-    <header class="header">
-        <h1>YES Attendance Scanner</h1>
-        <p>Young Economists' Society</p>
-    </header>
+<header class="header">
 
-    <main class="container">
+    <h1>YES Attendance Scanner</h1>
 
-        <!-- LOGIN SECTION -->
-        <section class="card" id="loginSection">
-
-            <h2>Attendance Officer Access</h2>
-
-            <p>
-                Sign in using your authorized VSU Google account
-                to access the attendance scanner.
-            </p>
-
-            <div id="googleButton"></div>
-
-            <div class="status" id="loginStatus"></div>
-
-        </section>
-
-
-        <!-- SCANNER SECTION -->
-        <section class="card scanner-section" id="scannerSection">
-
-            <h2>Attendance Scanner</h2>
-
-<p id="welcomeMessage">
-    Welcome, Officer!
-</p>
-
-<div class="scanner-box">
-    <div id="reader"></div>
-</div>
-
-<p id="scanMessage">
-    Point the camera at a student's QR code.
-</p>
-</div>
-
-            <div class="status" id="scanStatus"></div>
-
-            <button class="logout-button" onclick="logout()">
-                Sign Out
-            </button>
-
-        </section>
-
-    </main>
-
-    <footer>
+    <p>
         Young Economists' Society
-    </footer>
+    </p>
+
+</header>
 
 
-    <script>
+<main class="container">
 
-        const CLIENT_ID =
-            "69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
-        const BACKEND_URL =
+
+    <!-- LOGIN SECTION -->
+
+    <section class="card" id="loginSection">
+
+        <h2>
+            Attendance Officer Access
+        </h2>
+
+        <p>
+            Sign in using your authorized VSU Google account
+            to access the attendance scanner.
+        </p>
+
+        <div id="googleButton"></div>
+
+    </section>
+
+
+
+    <!-- SCANNER SECTION -->
+
+    <section class="card scanner-section" id="scannerSection">
+
+        <h2>
+            Attendance Scanner
+        </h2>
+
+        <p id="welcomeMessage">
+            Welcome, Officer!
+        </p>
+
+
+        <div class="scanner-box">
+
+            <div id="reader"></div>
+
+        </div>
+
+
+        <p id="scanMessage">
+            Point the camera at a student's QR code.
+        </p>
+
+
+        <button
+            class="logout-button"
+            onclick="logout()">
+
+            Sign Out
+
+        </button>
+
+    </section>
+
+
+</main>
+
+
+<footer>
+
+    Young Economists' Society
+
+</footer>
+
+
+
+<script>
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+
+const CLIENT_ID =
+    "69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
+
+
+const BACKEND_URL =
     "https://script.google.com/macros/s/AKfycbzpj5BrUy0tlF7ODwGJCf4LXG5JkRXXbt25vhNz7bS9jHg9eVV5NOeuAfwRk9Oo3Y0-/exec";
 
 
-        // Google Sign-In callback
+/* =========================================================
+   GOOGLE LOGIN
+   ========================================================= */
+
+
+let googleIdToken = null;
+
+
 function handleCredentialResponse(response) {
 
     console.log("Google sign-in successful.");
 
-    const credential = response.credential;
+    googleIdToken = response.credential;
 
-window.googleIdToken = credential;
-    // Decode the Google ID token payload for display only.
-    const payload = JSON.parse(
-        atob(
-            credential.split(".")[1]
-                .replace(/-/g, "+")
-                .replace(/_/g, "/")
-        )
-    );
 
-    const name = payload.name;
-    const email = payload.email;
+    /*
+     * Decode the token only for displaying
+     * the officer's name and email.
+     */
 
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("scannerSection").style.display = "block";
+    try {
 
-    document.getElementById("welcomeMessage").innerText =
-        "Signed in as: " + name + " (" + email + ")";
+        const parts =
+            googleIdToken.split(".");
 
-    console.log("Signed-in email:", email);
+        const payload =
+            JSON.parse(
+                atob(
+                    parts[1]
+                        .replace(/-/g, "+")
+                        .replace(/_/g, "/")
+                )
+            );
 
-    startScanner();
+
+        const name =
+            payload.name || "Officer";
+
+
+        const email =
+            payload.email || "";
+
+
+        document.getElementById("loginSection")
+            .style.display = "none";
+
+
+        document.getElementById("scannerSection")
+            .style.display = "block";
+
+
+        document.getElementById("welcomeMessage")
+            .innerText =
+                "Signed in as: " +
+                name +
+                " (" +
+                email +
+                ")";
+
+
+        console.log("Signed-in email:", email);
+
+
+        startScanner();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Could not read Google credential:",
+            error
+        );
+
+        alert(
+            "There was a problem reading your Google sign-in."
+        );
+
+    }
+
 }
 
 
-// QR Scanner
+
+/* =========================================================
+   QR SCANNER
+   ========================================================= */
+
+
+let qrScanner = null;
+
+
 function startScanner() {
 
-    const scanner = new Html5Qrcode("reader");
+    console.log("Starting QR scanner...");
 
-    scanner.start(function startScanner() {
 
-    const scanner = new Html5Qrcode("reader");
+    if (qrScanner !== null) {
 
-    scanner.start(
-        { facingMode: "environment" },
+        try {
+
+            qrScanner.clear();
+
+        }
+
+        catch (error) {
+
+            console.log(
+                "Previous scanner already cleared."
+            );
+
+        }
+
+    }
+
+
+    qrScanner =
+        new Html5Qrcode("reader");
+
+
+    qrScanner.start(
+
+        {
+            facingMode: "environment"
+        },
+
 
         {
             fps: 10,
+
             qrbox: {
                 width: 250,
                 height: 250
             }
         },
 
+
         function(decodedText) {
 
-            console.log("QR Code detected:", decodedText);
 
-            // The QR contains a URL.
-            // For now, show exactly what was scanned
-            // and what we extract from it.
+            console.log(
+                "FULL QR:",
+                decodedText
+            );
 
-            const studentId = decodedText
-                .trim()
-                .split("/")
-                .pop();
 
-            console.log("FULL QR:", decodedText);
-            console.log("EXTRACTED STUDENT ID:", studentId);
+            /*
+             * IMPORTANT:
+             *
+             * We know your QR contains a
+             * Google Apps Script URL.
+             *
+             * For now, we are NOT sending
+             * anything to the backend.
+             *
+             * We are only showing the URL
+             * and the value at its end.
+             */
 
-            document.getElementById("scanMessage").innerText =
-                "QR detected:\n\n" +
-                decodedText +
-                "\n\nExtracted ID:\n" +
-                studentId;
 
-            scanner.stop().then(function() {
+            const cleanQR =
+                decodedText.trim();
 
-                console.log("Ready to inspect the extracted ID.");
 
-            }).catch(function(error) {
+            const pieces =
+                cleanQR.split("/");
 
-                console.error("Could not stop scanner:", error);
 
-            });
+            const extractedID =
+                pieces[pieces.length - 1];
+
+
+            console.log(
+                "EXTRACTED ID:",
+                extractedID
+            );
+
+
+            document.getElementById("scanMessage")
+                .innerText =
+
+                    "QR detected!\n\n" +
+
+                    "Full QR:\n" +
+
+                    cleanQR +
+
+                    "\n\n" +
+
+                    "Extracted ID:\n" +
+
+                    extractedID;
+
+
+            /*
+             * Stop the scanner so it doesn't
+             * scan the same QR repeatedly.
+             */
+
+            qrScanner.stop()
+
+                .then(function() {
+
+                    console.log(
+                        "Scanner stopped."
+                    );
+
+                })
+
+                .catch(function(error) {
+
+                    console.error(
+                        "Could not stop scanner:",
+                        error
+                    );
+
+                });
 
         },
+
 
         function(errorMessage) {
 
-            // Normal scanning errors are ignored.
+            /*
+             * Normal QR scanning errors
+             * are ignored.
+             */
 
         }
 
-    ).catch(function(error) {
-
-        console.error("Camera error:", error);
-
-        document.getElementById("scanMessage").innerText =
-            "Unable to access the camera. Please allow camera access.";
-
-    });
-}
-        function sendAttendance(studentId) {
-
-    if (!window.googleIdToken) {
-
-        document.getElementById("scanMessage").innerText =
-            "Please sign in again.";
-
-        return;
-    }
-
-
-    fetch(BACKEND_URL, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-        },
-
-        body: JSON.stringify({
-
-            studentId: studentId.trim(),
-
-            idToken: window.googleIdToken
-
-        })
-
-    })
-
-    .then(function(response) {
-
-        return response.json();
-
-    })
-
-    .then(function(result) {
-
-        console.log("Backend response:", result);
-
-
-        if (result.success) {
-
-            document.getElementById("scanMessage").innerText =
-                "✓ Attendance recorded!\n\n" +
-                result.student.name +
-                "\n" +
-                result.student.id +
-                "\n" +
-                result.date +
-                " " +
-                result.time;
-
-
-        } else {
-
-            document.getElementById("scanMessage").innerText =
-                "⚠ " + result.message;
-
-        }
-
-
-        // Start scanner again after a short delay.
-
-        setTimeout(function() {
-
-            startScanner();
-
-        }, 2500);
-
-    })
+    )
 
     .catch(function(error) {
 
-        console.error("Backend error:", error);
+        console.error(
+            "Camera error:",
+            error
+        );
 
-        document.getElementById("scanMessage").innerText =
-            "Unable to connect to the attendance server.";
 
-        setTimeout(function() {
+        document.getElementById("scanMessage")
+            .innerText =
 
-            startScanner();
+                "Unable to access the camera.\n\n" +
 
-        }, 2500);
+                "Please allow camera access.";
 
     });
+
 }
 
-        // Initialize Google Sign-In
-        window.onload = function () {
 
-            google.accounts.id.initialize({
-                client_id: CLIENT_ID,
-                callback: handleCredentialResponse
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+
+function logout() {
+
+
+    if (qrScanner !== null) {
+
+        qrScanner.stop()
+
+            .then(function() {
+
+                console.log(
+                    "Scanner stopped."
+                );
+
+            })
+
+            .catch(function(error) {
+
+                console.log(
+                    "Scanner was not running."
+                );
+
             });
 
-            google.accounts.id.renderButton(
-                document.getElementById("googleButton"),
-                {
-                    theme: "outline",
-                    size: "large",
-                    text: "signin_with",
-                    shape: "rectangular",
-                    width: 280
-                }
-            );
-
-        };
+    }
 
 
-        function logout() {
+    googleIdToken = null;
 
-            document.getElementById("scannerSection").style.display = "none";
 
-            document.getElementById("loginSection").style.display = "block";
+    document.getElementById("scannerSection")
+        .style.display = "none";
 
-            document.getElementById("googleButton").innerHTML = "";
 
-            google.accounts.id.disableAutoSelect();
+    document.getElementById("loginSection")
+        .style.display = "block";
 
-            google.accounts.id.renderButton(
-                document.getElementById("googleButton"),
-                {
-                    theme: "outline",
-                    size: "large",
-                    text: "signin_with",
-                    shape: "rectangular",
-                    width: 280
-                }
-            );
+
+    document.getElementById("googleButton")
+        .innerHTML = "";
+
+
+    google.accounts.id.disableAutoSelect();
+
+
+    renderGoogleButton();
+
+}
+
+
+
+/* =========================================================
+   GOOGLE BUTTON
+   ========================================================= */
+
+
+function renderGoogleButton() {
+
+
+    const button =
+        document.getElementById(
+            "googleButton"
+        );
+
+
+    if (!button) {
+
+        console.error(
+            "googleButton element not found."
+        );
+
+        return;
+
+    }
+
+
+    button.innerHTML = "";
+
+
+    google.accounts.id.renderButton(
+
+        button,
+
+        {
+
+            theme: "outline",
+
+            size: "large",
+
+            text: "signin_with",
+
+            shape: "rectangular",
+
+            width: 280
+
         }
 
-    </script>
+    );
+
+}
+
+
+
+/* =========================================================
+   PAGE INITIALIZATION
+   ========================================================= */
+
+
+window.onload = function() {
+
+
+    console.log(
+        "YES Attendance Scanner loaded."
+    );
+
+
+    if (
+        typeof google === "undefined" ||
+        !google.accounts ||
+        !google.accounts.id
+    ) {
+
+        console.error(
+            "Google Identity Services did not load."
+        );
+
+        return;
+
+    }
+
+
+    google.accounts.id.initialize({
+
+        client_id: CLIENT_ID,
+
+        callback:
+            handleCredentialResponse
+
+    });
+
+
+    renderGoogleButton();
+
+};
+
+
+</script>
 
 </body>
+
 </html>

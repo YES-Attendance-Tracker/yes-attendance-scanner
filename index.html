@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>YES Attendance Scanner</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #0b4f9c;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            font-size: 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .login-button {
+            margin-top: 25px;
+            background: #0b4f9c;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-button:hover {
+            background: #083d78;
+        }
+
+        .scanner-section {
+            display: none;
+        }
+
+        .scanner-box {
+            margin: 25px auto;
+            padding: 50px 20px;
+            border: 2px dashed #0b4f9c;
+            border-radius: 12px;
+            color: #0b4f9c;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .logout-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>YES Attendance Scanner</h1>
+        <p>Young Economists' Society</p>
+    </header>
+
+    <main class="container">
+
+        <!-- LOGIN -->
+        <section class="card" id="loginSection">
+
+            <h2>Attendance Officer Access</h2>
+
+            <p>
+                Please sign in using your authorized Google account
+                to access the attendance scanner.
+            </p>
+
+            <button class="login-button" onclick="startLogin()">
+                Sign in with Google
+            </button>
+
+            <div class="status" id="loginStatus"></div>
+
+        </section>
+
+
+        <!-- SCANNER -->
+        <section class="card scanner-section" id="scannerSection">
+
+            <h2>Attendance Scanner</h2>
+
+            <p id="welcomeMessage">
+                Welcome, Officer!
+            </p>
+
+            <div class="scanner-box">
+                📷
+                <br><br>
+                QR SCANNER
+                <br><br>
+                <small>
+                    Student QR scanning will appear here.
+                </small>
+            </div>
+
+            <div class="status" id="scanStatus"></div>
+
+            <button class="logout-button" onclick="logout()">
+                Sign Out
+            </button>
+
+        </section>
+
+    </main>
+
+    <footer>
+        Young Economists' Society
+    </footer>
+
+
+    <script>
+
+        function startLogin() {
+
+            document.getElementById("loginStatus").style.display = "block";
+
+            document.getElementById("loginStatus").innerText =
+                "Google authentication will be connected here.";
+
+        }
+
+
+        function logout() {
+
+            document.getElementById("scannerSection").style.display = "none";
+
+            document.getElementById("loginSection").style.display = "block";
+
+        }
+
+    </script>
+
+</body>
+</html>

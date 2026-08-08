@@ -247,15 +247,55 @@ document.getElementById("scanMessage").innerText =
     decodedText +
     "\n\nExtracted ID:\n" +
     studentId;
-scanner.stop().then(function() {
+function startScanner() {
 
-    console.log("Ready to inspect the extracted ID.");
+    const scanner = new Html5Qrcode("reader");
 
-}).catch(function(error) {
+    scanner.start(
+        { facingMode: "environment" },
 
-    console.error("Could not stop scanner:", error);
+        {
+            fps: 10,
+            qrbox: {
+                width: 250,
+                height: 250
+            }
+        },
 
-});
+        function(decodedText) {
+
+            console.log("QR Code detected:", decodedText);
+
+            document.getElementById("scanMessage").innerText =
+                "QR detected. Checking attendance...";
+
+            scanner.stop().then(function() {
+
+                sendAttendance(decodedText);
+
+            }).catch(function(error) {
+
+                console.error("Could not stop scanner:", error);
+
+                sendAttendance(decodedText);
+
+            });
+
+        },
+
+        function(errorMessage) {
+            // Normal scanning errors are ignored.
+        }
+
+    ).catch(function(error) {
+
+        console.error("Camera error:", error);
+
+        document.getElementById("scanMessage").innerText =
+            "Unable to access the camera. Please allow camera access.";
+
+    });
+}
         function(errorMessage) {
             // Normal scanning errors are ignored.
         }

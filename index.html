@@ -8,6 +8,7 @@
 
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
         * {
@@ -148,15 +149,13 @@
                 Welcome, Officer!
             </p>
 
-            <div class="scanner-box">
-                📷
-                <br><br>
-                QR SCANNER
-                <br><br>
-                <small>
-                    Student QR scanning will appear here.
-                </small>
-            </div>
+<div class="scanner-box">
+    <div id="reader"></div>
+
+    <p id="scanMessage">
+        Point the camera at a student's QR code.
+    </p>
+</div>
 
             <div class="status" id="scanStatus"></div>
 
@@ -181,6 +180,53 @@
 
         // Google Sign-In callback
         function handleCredentialResponse(response) {
+            function startScanner() {
+
+    const scanner = new Html5Qrcode("reader");
+
+    scanner.start(
+        { facingMode: "environment" },
+
+        {
+            fps: 10,
+            qrbox: {
+                width: 250,
+                height: 250
+            }
+        },
+
+        function(decodedText) {
+
+            console.log("QR Code detected:", decodedText);
+
+            document.getElementById("scanMessage").innerText =
+                "QR detected: " + decodedText;
+
+            scanner.stop().then(function() {
+
+                console.log("Scanner stopped.");
+
+            }).catch(function(error) {
+
+                console.error("Could not stop scanner:", error);
+
+            });
+
+        },
+
+        function(errorMessage) {
+
+            // Ignore normal scanning errors.
+        }
+    )
+    .catch(function(error) {
+
+        console.error("Camera error:", error);
+
+        document.getElementById("scanMessage").innerText =
+            "Unable to access the camera. Please allow camera access.";
+    });
+}
 
             console.log("Google sign-in successful.");
 
@@ -213,6 +259,7 @@
                 "Signed in as: " + name + " (" + email + ")";
 
             console.log("Signed-in email:", email);
+            startScanner();
         }
 
 

@@ -7,10 +7,8 @@
 
 <title>YES Attendance Scanner</title>
 
-
 <!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-
 
 <!-- QR Scanner -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -293,6 +291,118 @@ body {
     font-size: 16px;
 
     font-weight: bold;
+}
+
+
+/* =========================================================
+   DUPLICATE WARNING
+========================================================= */
+
+.duplicate-message {
+    background: #fff7ed;
+
+    border: 2px solid #fdba74;
+
+    border-radius: 15px;
+
+    padding: 22px 15px;
+
+    text-align: center;
+}
+
+.duplicate-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f97316;
+
+    color: white;
+
+    border-radius: 50%;
+
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.duplicate-title {
+    color: #c2410c;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 12px;
+}
+
+.duplicate-text {
+    color: #7c2d12;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+.error-message {
+    background: #fef2f2;
+
+    border: 2px solid #fca5a5;
+
+    border-radius: 15px;
+
+    padding: 22px 15px;
+
+    text-align: center;
+}
+
+.error-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dc2626;
+
+    color: white;
+
+    border-radius: 50%;
+
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.error-title {
+    color: #b91c1c;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 10px;
+}
+
+.error-text {
+    color: #7f1d1d;
+
+    font-size: 14px;
+
+    line-height: 1.6;
 }
 
 
@@ -670,9 +780,21 @@ function startScanner() {
 
                 document.getElementById(
                     "scanMessage"
-                ).innerText =
-                    "Invalid QR code.";
+                ).innerHTML =
 
+                    '<div class="error-message">' +
+
+                    '<div class="error-icon">!</div>' +
+
+                    '<div class="error-title">' +
+                    'INVALID QR CODE' +
+                    '</div>' +
+
+                    '<div class="error-text">' +
+                    'This QR code is not a valid student QR code.' +
+                    '</div>' +
+
+                    '</div>';
 
                 return;
 
@@ -683,9 +805,21 @@ function startScanner() {
 
                 document.getElementById(
                     "scanMessage"
-                ).innerText =
-                    "Student ID could not be found.";
+                ).innerHTML =
 
+                    '<div class="error-message">' +
+
+                    '<div class="error-icon">!</div>' +
+
+                    '<div class="error-title">' +
+                    'STUDENT ID NOT FOUND' +
+                    '</div>' +
+
+                    '<div class="error-text">' +
+                    'The QR code does not contain a student ID.' +
+                    '</div>' +
+
+                    '</div>';
 
                 return;
 
@@ -752,9 +886,21 @@ function startScanner() {
 
         document.getElementById(
             "scanMessage"
-        ).innerText =
-            "Unable to access the camera.\n\n" +
-            "Please allow camera access.";
+        ).innerHTML =
+
+            '<div class="error-message">' +
+
+            '<div class="error-icon">!</div>' +
+
+            '<div class="error-title">' +
+            'CAMERA ERROR' +
+            '</div>' +
+
+            '<div class="error-text">' +
+            'Unable to access the camera. Please allow camera access.' +
+            '</div>' +
+
+            '</div>';
 
     });
 
@@ -773,8 +919,21 @@ function sendAttendance(studentId) {
 
         document.getElementById(
             "scanMessage"
-        ).innerText =
-            "Please sign in again.";
+        ).innerHTML =
+
+            '<div class="error-message">' +
+
+            '<div class="error-icon">!</div>' +
+
+            '<div class="error-title">' +
+            'SIGN-IN REQUIRED' +
+            '</div>' +
+
+            '<div class="error-text">' +
+            'Please sign in again before scanning.' +
+            '</div>' +
+
+            '</div>';
 
         return;
 
@@ -868,17 +1027,63 @@ function sendAttendance(studentId) {
 
 
         /* =============================================
-           ERROR
+           DUPLICATE ATTENDANCE
+        ============================================= */
+
+        else if (
+            result.message &&
+            result.message
+                .toLowerCase()
+                .includes("already marked present")
+        ) {
+
+            document.getElementById(
+                "scanMessage"
+            ).innerHTML =
+
+                '<div class="duplicate-message">' +
+
+                '<div class="duplicate-icon">!</div>' +
+
+                '<div class="duplicate-title">' +
+                'ALREADY RECORDED' +
+                '</div>' +
+
+                '<p class="duplicate-text">' +
+                'This student has already been marked ' +
+                'present today.' +
+                '<br><br>' +
+                '<strong>No additional attendance record was created.</strong>' +
+                '</p>' +
+
+                '</div>';
+
+        }
+
+
+        /* =============================================
+           OTHER ERROR
         ============================================= */
 
         else {
 
             document.getElementById(
                 "scanMessage"
-            ).innerText =
+            ).innerHTML =
 
-                "⚠ " +
-                result.message;
+                '<div class="error-message">' +
+
+                '<div class="error-icon">!</div>' +
+
+                '<div class="error-title">' +
+                'ATTENDANCE NOT RECORDED' +
+                '</div>' +
+
+                '<div class="error-text">' +
+                result.message +
+                '</div>' +
+
+                '</div>';
 
         }
 
@@ -893,6 +1098,7 @@ function sendAttendance(studentId) {
                 "scanMessage"
             ).innerText =
                 "Ready to scan attendance.";
+
 
             startScanner();
 
@@ -911,8 +1117,21 @@ function sendAttendance(studentId) {
 
         document.getElementById(
             "scanMessage"
-        ).innerText =
-            "Unable to connect to the attendance server.";
+        ).innerHTML =
+
+            '<div class="error-message">' +
+
+            '<div class="error-icon">!</div>' +
+
+            '<div class="error-title">' +
+            'SERVER ERROR' +
+            '</div>' +
+
+            '<div class="error-text">' +
+            'Unable to connect to the attendance server. Please try again.' +
+            '</div>' +
+
+            '</div>';
 
 
         setTimeout(function() {
@@ -921,6 +1140,7 @@ function sendAttendance(studentId) {
                 "scanMessage"
             ).innerText =
                 "Ready to scan attendance.";
+
 
             startScanner();
 

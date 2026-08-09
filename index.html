@@ -1,338 +1,504 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>YES Attendance Scanner</title>
-
-<!-- Google Identity Services -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
-<!-- QR Scanner -->
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <title>YES Attendance Scanner</title>
 
 
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #eef4fb;
-    color: #1f2937;
-}
-
-.header {
-    background: linear-gradient(135deg, #0b4f9c, #1769c2);
-    color: white;
-    padding: 30px 20px;
-    text-align: center;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-}
-
-.header h1 {
-    margin: 0;
-    font-size: 30px;
-    font-weight: 700;
-}
-
-.header p {
-    margin: 8px 0 0;
-    font-size: 15px;
-    opacity: 0.9;
-}
-
-.container {
-    max-width: 620px;
-    margin: 35px auto;
-    padding: 20px;
-}
-
-.card {
-    background: white;
-    border-radius: 18px;
-    padding: 35px 30px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    text-align: center;
-}
-
-.login-icon {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e7f0fc;
-    color: #0b4f9c;
-    border-radius: 50%;
-    font-size: 32px;
-}
-
-.card h2 {
-    margin: 0 0 10px;
-    color: #123b68;
-    font-size: 24px;
-}
-
-.card-description {
-    color: #6b7280;
-    line-height: 1.6;
-    margin-bottom: 25px;
-}
-
-#googleButton {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.scanner-section {
-    display: none;
-}
-
-.officer-badge {
-    display: inline-block;
-    background: #e7f0fc;
-    color: #0b4f9c;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.scanner-box {
-    margin: 25px auto;
-    padding: 15px;
-    background: #f8fbff;
-    border: 2px solid #d7e5f5;
-    border-radius: 15px;
-}
-
-#reader {
-    width: 100%;
-    max-width: 450px;
-    margin: auto;
-}
-
-.scan-instruction {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 15px 0;
-}
-
-#scanMessage {
-    white-space: pre-wrap;
-    word-break: break-word;
-    margin-top: 20px;
-    padding: 15px;
-    background: #f4f8fd;
-    border-radius: 10px;
-    color: #374151;
-    font-size: 14px;
-    line-height: 1.5;
-}
+    <!-- Google Identity Services -->
+    <script
+        src="https://accounts.google.com/gsi/client"
+        async
+        defer>
+    </script>
 
 
-/* SUCCESS */
-
-.success-message {
-    background: #f0fdf4;
-    border: 2px solid #86efac;
-    border-radius: 15px;
-    padding: 22px 15px;
-    text-align: center;
-}
-
-.success-icon {
-    width: 55px;
-    height: 55px;
-    margin: 0 auto 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #16a34a;
-    color: white;
-    border-radius: 50%;
-    font-size: 30px;
-    font-weight: bold;
-}
-
-.success-title {
-    color: #15803d;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.student-name {
-    color: #123b68;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.student-details {
-    color: #4b5563;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 12px;
-}
-
-.student-id {
-    color: #6b7280;
-    font-size: 13px;
-    margin-bottom: 8px;
-}
-
-.attendance-time {
-    color: #123b68;
-    font-size: 16px;
-    font-weight: bold;
-}
+    <!-- QR Scanner -->
+    <script
+        src="https://unpkg.com/html5-qrcode"
+        type="text/javascript">
+    </script>
 
 
-/* DUPLICATE */
+    <style>
 
-.duplicate-message {
-    background: #fff7ed;
-    border: 2px solid #fdba74;
-    border-radius: 15px;
-    padding: 22px 15px;
-    text-align: center;
-}
-
-.duplicate-icon {
-    width: 55px;
-    height: 55px;
-    margin: 0 auto 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f97316;
-    color: white;
-    border-radius: 50%;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.duplicate-title {
-    color: #c2410c;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-.duplicate-text {
-    color: #7c2d12;
-    font-size: 14px;
-    line-height: 1.6;
-    margin: 0;
-}
+        * {
+            box-sizing: border-box;
+        }
 
 
-/* ERROR */
+        body {
 
-.error-message {
-    background: #fef2f2;
-    border: 2px solid #fca5a5;
-    border-radius: 15px;
-    padding: 22px 15px;
-    text-align: center;
-}
+            margin: 0;
 
-.error-icon {
-    width: 55px;
-    height: 55px;
-    margin: 0 auto 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #dc2626;
-    color: white;
-    border-radius: 50%;
-    font-size: 26px;
-    font-weight: bold;
-}
+            font-family:
+                Arial,
+                sans-serif;
 
-.error-title {
-    color: #b91c1c;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+            background: #f4f7fb;
 
-.error-text {
-    color: #7f1d1d;
-    font-size: 14px;
-    line-height: 1.6;
-}
+            color: #1f2937;
+
+        }
 
 
-/* LOGOUT */
+        .header {
 
-.logout-button {
-    background: #dc2626;
-    color: white;
-    border: none;
-    padding: 11px 22px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 22px;
-    font-size: 14px;
-    font-weight: bold;
-    transition: 0.2s;
-}
+            background: #0b4f9c;
 
-.logout-button:hover {
-    background: #b91c1c;
-}
+            color: white;
 
-footer {
-    text-align: center;
-    color: #6b7280;
-    font-size: 13px;
-    padding: 25px 20px;
-}
+            padding: 25px 20px;
+
+            text-align: center;
+
+        }
 
 
-@media (max-width: 600px) {
+        .header h1 {
 
-    .header {
-        padding: 25px 15px;
-    }
+            margin: 0;
 
-    .header h1 {
-        font-size: 25px;
-    }
+            font-size: 28px;
 
-    .container {
-        margin: 20px auto;
-        padding: 12px;
-    }
+        }
 
-    .card {
-        padding: 28px 18px;
-        border-radius: 15px;
-    }
 
-    .card h2 {
-        font-size: 21px;
-    }
+        .header p {
 
-    #reader {
-        max-width: 100%;
-    }
+            margin: 8px 0 0;
 
-}
+            font-size: 15px;
 
-</style>
+        }
+
+
+        .container {
+
+            max-width: 650px;
+
+            margin: 40px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .card {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+
+            text-align: center;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .card h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .card p {
+
+            color: #6b7280;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* =========================
+           GOOGLE SIGN-IN
+        ========================= */
+
+        #googleButton {
+
+            display: flex;
+
+            justify-content: center;
+
+            margin-top: 25px;
+
+        }
+
+
+        /* =========================
+           SCANNER
+        ========================= */
+
+        .scanner-section {
+
+            display: none;
+
+        }
+
+
+        #reader {
+
+            width: 100%;
+
+            max-width: 450px;
+
+            margin: 25px auto;
+
+        }
+
+
+        .scanner-box {
+
+            margin: 25px auto;
+
+            padding: 15px;
+
+            border:
+                2px dashed
+                #0b4f9c;
+
+            border-radius: 12px;
+
+            color: #0b4f9c;
+
+        }
+
+
+        #scanMessage {
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+
+            min-height: 25px;
+
+        }
+
+
+        /* =========================
+           DASHBOARD
+        ========================= */
+
+        .dashboard {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 15px;
+
+            margin: 25px 0;
+
+        }
+
+
+        .dashboard-card {
+
+            background: #eef5ff;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            text-align: center;
+
+        }
+
+
+        .dashboard-card.full {
+
+            grid-column:
+                1 / -1;
+
+        }
+
+
+        .dashboard-number {
+
+            font-size: 36px;
+
+            font-weight: bold;
+
+            color: #0b4f9c;
+
+            margin: 5px 0;
+
+        }
+
+
+        .dashboard-label {
+
+            font-size: 14px;
+
+            color: #6b7280;
+
+        }
+
+
+        .recent-title {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .recent-list {
+
+            text-align: left;
+
+        }
+
+
+        .recent-item {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 12px 0;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+        }
+
+
+        .recent-item:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .recent-name {
+
+            font-weight: bold;
+
+            color: #1f2937;
+
+        }
+
+
+        .recent-id {
+
+            font-size: 12px;
+
+            color: #6b7280;
+
+            margin-top: 3px;
+
+        }
+
+
+        .recent-time {
+
+            font-size: 13px;
+
+            color: #0b4f9c;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+            margin-left: 10px;
+
+        }
+
+
+        .no-recent {
+
+            color: #6b7280;
+
+            font-size: 14px;
+
+            padding: 10px 0;
+
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .success-card {
+
+            display: none;
+
+            background: #ecfdf5;
+
+            border:
+                1px solid
+                #10b981;
+
+            color: #065f46;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            margin-top: 20px;
+
+        }
+
+
+        .warning-card {
+
+            display: none;
+
+            background: #fff7ed;
+
+            border:
+                1px solid
+                #f59e0b;
+
+            color: #9a3412;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            margin-top: 20px;
+
+        }
+
+
+        .error-card {
+
+            display: none;
+
+            background: #fef2f2;
+
+            border:
+                1px solid
+                #ef4444;
+
+            color: #991b1b;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            margin-top: 20px;
+
+        }
+
+
+        /* =========================
+           LOGOUT
+        ========================= */
+
+        .logout-button {
+
+            background: #dc2626;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 20px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            margin-top: 20px;
+
+        }
+
+
+        .logout-button:hover {
+
+            background: #b91c1c;
+
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            text-align: center;
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+            padding: 20px;
+
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 500px) {
+
+            .container {
+
+                margin-top: 20px;
+
+                padding: 12px;
+
+            }
+
+
+            .card {
+
+                padding: 22px;
+
+            }
+
+
+            .dashboard {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .dashboard-card.full {
+
+                grid-column:
+                    auto;
+
+            }
+
+
+            .recent-item {
+
+                align-items: flex-start;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -340,1128 +506,1743 @@ footer {
 <body>
 
 
-<header class="header">
+    <!-- =========================
+         HEADER
+    ========================= -->
 
-    <h1>
-        YES Attendance Scanner
-    </h1>
+    <header class="header">
 
-    <p>
+        <h1>
+            YES Attendance Scanner
+        </h1>
+
+        <p>
+            Young Economists' Society
+        </p>
+
+    </header>
+
+
+
+    <main class="container">
+
+
+        <!-- =========================
+             LOGIN SECTION
+        ========================= -->
+
+        <section
+            class="card"
+            id="loginSection">
+
+            <h2>
+                Attendance Officer Access
+            </h2>
+
+            <p>
+                Sign in using your authorized
+                VSU Google account to access
+                the attendance scanner.
+            </p>
+
+
+            <div id="googleButton"></div>
+
+        </section>
+
+
+
+        <!-- =========================
+             SCANNER SECTION
+        ========================= -->
+
+        <section
+            class="card scanner-section"
+            id="scannerSection">
+
+
+            <h2>
+                Attendance Scanner
+            </h2>
+
+
+            <p id="welcomeMessage">
+                Welcome, Officer!
+            </p>
+
+
+
+            <!-- =====================
+                 DASHBOARD
+            ====================== -->
+
+            <div class="dashboard">
+
+
+                <!-- TODAY COUNT -->
+
+                <div class="dashboard-card">
+
+                    <div
+                        class="dashboard-label">
+                        Today's Attendance
+                    </div>
+
+                    <div
+                        class="dashboard-number"
+                        id="todayCount">
+                        0
+                    </div>
+
+                    <div
+                        class="dashboard-label">
+                        Students Present
+                    </div>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="dashboard-card">
+
+                    <div
+                        class="dashboard-label">
+                        Date
+                    </div>
+
+                    <div
+                        id="todayDate"
+                        style="
+                            font-size:18px;
+                            font-weight:bold;
+                            margin-top:10px;
+                        ">
+                        Loading...
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECENT SCANS -->
+
+                <div
+                    class="dashboard-card full">
+
+                    <div
+                        class="recent-title">
+                        Recent Scans
+                    </div>
+
+                    <div
+                        class="recent-list"
+                        id="recentScans">
+
+                        <div class="no-recent">
+                            No attendance recorded yet.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================
+                 SCANNER
+            ====================== -->
+
+            <div class="scanner-box">
+
+                <div id="reader"></div>
+
+            </div>
+
+
+            <p id="scanMessage">
+
+                Point the camera at
+                a student's QR code.
+
+            </p>
+
+
+
+            <!-- SUCCESS -->
+
+            <div
+                class="success-card"
+                id="successCard">
+
+                <strong>
+                    ✓ Attendance Recorded
+                </strong>
+
+                <p id="successDetails"></p>
+
+            </div>
+
+
+
+            <!-- WARNING -->
+
+            <div
+                class="warning-card"
+                id="warningCard">
+
+                <strong>
+                    ⚠ Already Recorded
+                </strong>
+
+                <p id="warningDetails"></p>
+
+            </div>
+
+
+
+            <!-- ERROR -->
+
+            <div
+                class="error-card"
+                id="errorCard">
+
+                <strong>
+                    ⚠ Error
+                </strong>
+
+                <p id="errorDetails"></p>
+
+            </div>
+
+
+
+            <!-- LOGOUT -->
+
+            <button
+                class="logout-button"
+                onclick="logout()">
+
+                Sign Out
+
+            </button>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <footer>
+
         Young Economists' Society
-    </p>
 
-</header>
+    </footer>
 
 
-<main class="container">
 
+    <script>
 
-<!-- LOGIN -->
 
-<section class="card" id="loginSection">
+        // ====================================================
+        // CONFIGURATION
+        // ====================================================
 
-    <div class="login-icon">
-        🔐
-    </div>
 
-    <h2>
-        Attendance Officer Access
-    </h2>
+        const CLIENT_ID =
+            "69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
 
-    <p class="card-description">
 
-        Sign in using your authorized
-        VSU Google account to access
-        the attendance scanner.
+        const BACKEND_URL =
+            "https://script.google.com/macros/s/AKfycbzpj5BrUy0tlF7ODwGJCf4LXG5JkRXXbt25vhNz7bS9jHg9eVV5NOeuAfwRk9Oo3Y0-/exec";
 
-    </p>
 
-    <div id="googleButton"></div>
 
-</section>
+        // ====================================================
+        // GLOBAL VARIABLES
+        // ====================================================
 
 
-<!-- SCANNER -->
+        let scanner = null;
 
-<section class="card scanner-section" id="scannerSection">
+        window.googleIdToken = null;
 
-    <div class="officer-badge">
-        ✓ AUTHORIZED OFFICER
-    </div>
 
-    <h2>
-        Attendance Scanner
-    </h2>
 
-    <p id="welcomeMessage">
-        Welcome, Officer!
-    </p>
+        // ====================================================
+        // GOOGLE SIGN-IN CALLBACK
+        // ====================================================
 
-    <div class="scanner-box">
 
-        <div id="reader"></div>
-
-    </div>
-
-    <p class="scan-instruction">
-
-        📱 Point the camera at a student's QR code
-
-    </p>
-
-    <p id="scanMessage">
-
-        Ready to scan attendance.
-
-    </p>
-
-    <button
-        class="logout-button"
-        onclick="logout()">
-
-        Sign Out
-
-    </button>
-
-</section>
-
-
-</main>
-
-
-<footer>
-
-    Young Economists' Society
-
-</footer>
-
-
-
-<script>
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-const CLIENT_ID =
-"69872284642-ssg31lkf3b6tkuskslf1facd36fbutuj.apps.googleusercontent.com";
-
-
-const BACKEND_URL =
-"https://script.google.com/macros/s/AKfycbzpj5BrUy0tlF7ODwGJCf4LXG5JkRXXbt25vhNz7bS9jHg9eVV5NOeuAfwRk9Oo3Y0-/exec";
-
-
-let googleIdToken = null;
-
-let qrScanner = null;
-
-
-
-/* =========================================================
-   SOUND SYSTEM
-========================================================= */
-
-/*
-   The sounds are generated directly by the browser.
-   No audio files are required.
-*/
-
-let audioContext = null;
-
-
-function getAudioContext() {
-
-    if (!audioContext) {
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if (AudioContext) {
-
-            audioContext =
-                new AudioContext();
-
-        }
-
-    }
-
-    return audioContext;
-
-}
-
-
-/* ---------------------------------------------------------
-   SUCCESS SOUND
---------------------------------------------------------- */
-
-function playSuccessSound() {
-
-    const ctx =
-        getAudioContext();
-
-    if (!ctx) return;
-
-
-    if (ctx.state === "suspended") {
-
-        ctx.resume();
-
-    }
-
-
-    const now =
-        ctx.currentTime;
-
-
-    const oscillator =
-        ctx.createOscillator();
-
-    const gain =
-        ctx.createGain();
-
-
-    oscillator.type =
-        "sine";
-
-
-    /*
-       Two pleasant rising notes.
-    */
-
-    oscillator.frequency
-        .setValueAtTime(
-            660,
-            now
-        );
-
-    oscillator.frequency
-        .setValueAtTime(
-            880,
-            now + 0.12
-        );
-
-
-    gain.gain
-        .setValueAtTime(
-            0.0001,
-            now
-        );
-
-    gain.gain
-        .exponentialRampToValueAtTime(
-            0.25,
-            now + 0.02
-        );
-
-    gain.gain
-        .exponentialRampToValueAtTime(
-            0.0001,
-            now + 0.35
-        );
-
-
-    oscillator.connect(gain);
-
-    gain.connect(ctx.destination);
-
-
-    oscillator.start(now);
-
-    oscillator.stop(
-        now + 0.35
-    );
-
-}
-
-
-/* ---------------------------------------------------------
-   DUPLICATE WARNING SOUND
---------------------------------------------------------- */
-
-function playDuplicateSound() {
-
-    const ctx =
-        getAudioContext();
-
-    if (!ctx) return;
-
-
-    if (ctx.state === "suspended") {
-
-        ctx.resume();
-
-    }
-
-
-    const now =
-        ctx.currentTime;
-
-
-    const oscillator =
-        ctx.createOscillator();
-
-    const gain =
-        ctx.createGain();
-
-
-    oscillator.type =
-        "sine";
-
-
-    oscillator.frequency
-        .setValueAtTime(
-            440,
-            now
-        );
-
-    oscillator.frequency
-        .setValueAtTime(
-            330,
-            now + 0.18
-        );
-
-
-    gain.gain
-        .setValueAtTime(
-            0.0001,
-            now
-        );
-
-    gain.gain
-        .exponentialRampToValueAtTime(
-            0.22,
-            now + 0.02
-        );
-
-    gain.gain
-        .exponentialRampToValueAtTime(
-            0.0001,
-            now + 0.45
-        );
-
-
-    oscillator.connect(gain);
-
-    gain.connect(ctx.destination);
-
-
-    oscillator.start(now);
-
-    oscillator.stop(
-        now + 0.45
-    );
-
-}
-
-
-/* ---------------------------------------------------------
-   ERROR SOUND
---------------------------------------------------------- */
-
-function playErrorSound() {
-
-    const ctx =
-        getAudioContext();
-
-    if (!ctx) return;
-
-
-    if (ctx.state === "suspended") {
-
-        ctx.resume();
-
-    }
-
-
-    const now =
-        ctx.currentTime;
-
-
-    const oscillator =
-        ctx.createOscillator();
-
-    const gain =
-        ctx.createGain();
-
-
-    oscillator.type =
-        "square";
-
-
-    oscillator.frequency
-        .setValueAtTime(
-            220,
-            now
-        );
-
-
-    gain.gain
-        .setValueAtTime(
-            0.0001,
-            now
-        );
-
-    gain.gain
-        .exponentialRampToValueAtTime(
-            0.12,
-            now + 0.02
-        );
-
-    gain.gain
-        .exponentialRampToValueAtTime(
-            0.0001,
-            now + 0.25
-        );
-
-
-    oscillator.connect(gain);
-
-    gain.connect(ctx.destination);
-
-
-    oscillator.start(now);
-
-    oscillator.stop(
-        now + 0.25
-    );
-
-}
-
-
-
-/* =========================================================
-   GOOGLE SIGN-IN
-========================================================= */
-
-function handleCredentialResponse(response) {
-
-    console.log(
-        "Google sign-in successful."
-    );
-
-
-    googleIdToken =
-        response.credential;
-
-
-    try {
-
-        const parts =
-            googleIdToken.split(".");
-
-
-        const payload =
-            JSON.parse(
-                atob(
-                    parts[1]
-                        .replace(/-/g, "+")
-                        .replace(/_/g, "/")
-                )
-            );
-
-
-        const name =
-            payload.name ||
-            "Officer";
-
-
-        const email =
-            payload.email ||
-            "";
-
-
-        document.getElementById(
-            "loginSection"
-        ).style.display =
-            "none";
-
-
-        document.getElementById(
-            "scannerSection"
-        ).style.display =
-            "block";
-
-
-        document.getElementById(
-            "welcomeMessage"
-        ).innerText =
-            "Signed in as: " +
-            name +
-            " (" +
-            email +
-            ")";
-
-
-        document.getElementById(
-            "scanMessage"
-        ).innerText =
-            "Ready to scan attendance.";
-
-
-        startScanner();
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Google credential error:",
-            error
-        );
-
-
-        playErrorSound();
-
-
-        alert(
-            "There was a problem reading your Google sign-in."
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   QR SCANNER
-========================================================= */
-
-function startScanner() {
-
-    console.log(
-        "Starting QR scanner..."
-    );
-
-
-    qrScanner =
-        new Html5Qrcode(
-            "reader"
-        );
-
-
-    qrScanner.start(
-
-        {
-            facingMode:
-                "environment"
-        },
-
-        {
-            fps: 10,
-
-            qrbox: {
-                width: 250,
-                height: 250
-            }
-
-        },
-
-
-        function(decodedText) {
+        function handleCredentialResponse(response) {
 
 
             console.log(
-                "FULL QR:",
-                decodedText
+                "Google sign-in successful."
             );
 
 
-            const cleanQR =
-                decodedText.trim();
+            const credential =
+                response.credential;
 
 
-            let extractedID;
+            window.googleIdToken =
+                credential;
+
+
+
+            // -----------------------------------------------
+            // Decode Google ID token
+            // -----------------------------------------------
+
+
+            const payload =
+                JSON.parse(
+
+                    atob(
+
+                        credential
+                            .split(".")[1]
+                            .replace(/-/g, "+")
+                            .replace(/_/g, "/")
+
+                    )
+
+                );
+
+
+            const name =
+                payload.name;
+
+
+            const email =
+                payload.email;
+
+
+
+            // -----------------------------------------------
+            // Show scanner
+            // -----------------------------------------------
+
+
+            document
+                .getElementById(
+                    "loginSection"
+                )
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById(
+                    "scannerSection"
+                )
+                .style.display =
+                "block";
+
+
+
+            document
+                .getElementById(
+                    "welcomeMessage"
+                )
+                .innerText =
+                    "Signed in as: " +
+                    name +
+                    " (" +
+                    email +
+                    ")";
+
+
+
+            console.log(
+                "Signed-in email:",
+                email
+            );
+
+
+
+            // -----------------------------------------------
+            // Load dashboard
+            // -----------------------------------------------
+
+
+            loadDashboard();
+
+
+
+            // -----------------------------------------------
+            // Start QR scanner
+            // -----------------------------------------------
+
+
+            startScanner();
+
+        }
+
+
+
+        // ====================================================
+        // START QR SCANNER
+        // ====================================================
+
+
+        function startScanner() {
+
+
+            // Prevent multiple scanners
+            if (scanner) {
+
+                try {
+
+                    scanner.stop();
+
+                }
+
+                catch (error) {
+
+                    console.log(
+                        "Previous scanner already stopped."
+                    );
+
+                }
+
+            }
+
+
+            scanner =
+                new Html5Qrcode(
+                    "reader"
+                );
+
+
+
+            scanner.start(
+
+                {
+                    facingMode:
+                        "environment"
+                },
+
+
+                {
+
+                    fps: 10,
+
+                    qrbox: {
+
+                        width: 250,
+
+                        height: 250
+
+                    }
+
+                },
+
+
+                function(decodedText) {
+
+
+                    console.log(
+                        "QR Code detected:",
+                        decodedText
+                    );
+
+
+
+                    // ----------------------------------------
+                    // Extract student ID from QR URL
+                    // ----------------------------------------
+
+
+                    let studentId =
+                        "";
+
+
+                    try {
+
+
+                        const url =
+                            new URL(
+                                decodedText
+                            );
+
+
+                        studentId =
+                            url.searchParams
+                                .get("id");
+
+
+                    }
+
+                    catch (error) {
+
+
+                        console.log(
+                            "QR is not a URL."
+                        );
+
+
+                        studentId =
+                            decodedText
+                                .trim();
+
+                    }
+
+
+
+                    console.log(
+                        "FULL QR:",
+                        decodedText
+                    );
+
+
+                    console.log(
+                        "EXTRACTED STUDENT ID:",
+                        studentId
+                    );
+
+
+
+                    if (!studentId) {
+
+
+                        document
+                            .getElementById(
+                                "scanMessage"
+                            )
+                            .innerText =
+                                "⚠ Could not find a Student ID in the QR code.";
+
+
+                        return;
+
+                    }
+
+
+
+                    // ----------------------------------------
+                    // Update message
+                    // ----------------------------------------
+
+
+                    document
+                        .getElementById(
+                            "scanMessage"
+                        )
+                        .innerText =
+                            "QR detected!\n\n" +
+                            "Student ID: " +
+                            studentId +
+                            "\n\n" +
+                            "Checking attendance...";
+
+
+
+                    // ----------------------------------------
+                    // Stop scanner
+                    // ----------------------------------------
+
+
+                    if (scanner) {
+
+                        scanner
+                            .stop()
+
+                            .then(
+                                function() {
+
+                                    sendAttendance(
+                                        studentId
+                                    );
+
+                                }
+                            )
+
+                            .catch(
+                                function(error) {
+
+                                    console.error(
+                                        "Could not stop scanner:",
+                                        error
+                                    );
+
+
+                                    sendAttendance(
+                                        studentId
+                                    );
+
+                                }
+                            );
+
+                    }
+
+                    else {
+
+                        sendAttendance(
+                            studentId
+                        );
+
+                    }
+
+                },
+
+
+                function(errorMessage) {
+
+                    // Normal QR scanning
+                    // errors are ignored.
+
+                }
+
+            )
+
+            .catch(
+                function(error) {
+
+
+                    console.error(
+                        "Camera error:",
+                        error
+                    );
+
+
+                    document
+                        .getElementById(
+                            "scanMessage"
+                        )
+                        .innerText =
+                            "Unable to access the camera. Please allow camera access.";
+
+                }
+
+            );
+
+        }
+
+
+
+        // ====================================================
+        // SEND ATTENDANCE
+        // ====================================================
+
+
+        function sendAttendance(studentId) {
+
+
+            if (!window.googleIdToken) {
+
+
+                document
+                    .getElementById(
+                        "scanMessage"
+                    )
+                    .innerText =
+                        "Please sign in again.";
+
+
+                return;
+
+            }
+
+
+
+            // Hide previous messages
+
+            hideResultCards();
+
+
+
+            fetch(
+
+                BACKEND_URL,
+
+                {
+
+                    method: "POST",
+
+
+                    headers: {
+
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+
+                    },
+
+
+                    body:
+
+                        JSON.stringify({
+
+                            studentId:
+                                studentId
+                                    .trim(),
+
+                            idToken:
+                                window.googleIdToken
+
+                        })
+
+                }
+
+            )
+
+            .then(
+                function(response) {
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                function(result) {
+
+
+                    console.log(
+                        "Backend response:",
+                        result
+                    );
+
+
+
+                    // ========================================
+                    // SUCCESS
+                    // ========================================
+
+
+                    if (result.success) {
+
+
+                        document
+                            .getElementById(
+                                "scanMessage"
+                            )
+                            .innerText =
+                                "Attendance successfully recorded.";
+
+
+                        document
+                            .getElementById(
+                                "successCard"
+                            )
+                            .style.display =
+                            "block";
+
+
+                        document
+                            .getElementById(
+                                "successDetails"
+                            )
+                            .innerText =
+
+                                result.student.name +
+                                "\n" +
+                                result.student.id +
+                                "\n" +
+                                result.date +
+                                " " +
+                                result.time;
+
+
+
+                        // ------------------------------------
+                        // Update dashboard
+                        // ------------------------------------
+
+
+                        loadDashboard();
+
+
+
+                        // ------------------------------------
+                        // Success sound
+                        // ------------------------------------
+
+
+                        playSuccessSound();
+
+                    }
+
+
+
+                    // ========================================
+                    // ALREADY RECORDED
+                    // ========================================
+
+
+                    else if (
+
+                        result.message &&
+                        result.message
+                            .toLowerCase()
+                            .includes(
+                                "already marked"
+                            )
+
+                    ) {
+
+
+                        document
+                            .getElementById(
+                                "scanMessage"
+                            )
+                            .innerText =
+                                "This student has already been recorded today.";
+
+
+                        document
+                            .getElementById(
+                                "warningCard"
+                            )
+                            .style.display =
+                            "block";
+
+
+                        document
+                            .getElementById(
+                                "warningDetails"
+                            )
+                            .innerText =
+                                result.message;
+
+
+
+                        // Warning sound
+
+                        playWarningSound();
+
+                    }
+
+
+
+                    // ========================================
+                    // OTHER ERROR
+                    // ========================================
+
+
+                    else {
+
+
+                        document
+                            .getElementById(
+                                "scanMessage"
+                            )
+                            .innerText =
+                                "Attendance could not be recorded.";
+
+
+                        document
+                            .getElementById(
+                                "errorCard"
+                            )
+                            .style.display =
+                            "block";
+
+
+                        document
+                            .getElementById(
+                                "errorDetails"
+                            )
+                            .innerText =
+                                result.message ||
+                                "Unknown server error.";
+
+
+
+                        // Error sound
+
+                        playErrorSound();
+
+                    }
+
+
+
+                    // ----------------------------------------
+                    // Restart scanner
+                    // ----------------------------------------
+
+
+                    setTimeout(
+
+                        function() {
+
+                            hideResultCards();
+
+                            startScanner();
+
+                        },
+
+                        2500
+
+                    );
+
+                }
+
+            )
+
+            .catch(
+                function(error) {
+
+
+                    console.error(
+                        "Backend error:",
+                        error
+                    );
+
+
+                    document
+                        .getElementById(
+                            "scanMessage"
+                        )
+                        .innerText =
+                            "Unable to connect to the attendance server.";
+
+
+                    document
+                        .getElementById(
+                            "errorCard"
+                        )
+                        .style.display =
+                        "block";
+
+
+                    document
+                        .getElementById(
+                            "errorDetails"
+                        )
+                        .innerText =
+                            error.message;
+
+
+
+                    playErrorSound();
+
+
+
+                    setTimeout(
+
+                        function() {
+
+                            hideResultCards();
+
+                            startScanner();
+
+                        },
+
+                        2500
+
+                    );
+
+                }
+
+            );
+
+        }
+
+
+
+        // ====================================================
+        // LOAD DASHBOARD
+        // ====================================================
+
+
+        function loadDashboard() {
+
+
+            fetch(
+
+                BACKEND_URL +
+                "?action=dashboard",
+
+                {
+
+                    method: "GET"
+
+                }
+
+            )
+
+            .then(
+                function(response) {
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                function(result) {
+
+
+                    console.log(
+                        "Dashboard response:",
+                        result
+                    );
+
+
+                    if (!result.success) {
+
+
+                        console.error(
+                            "Dashboard error:",
+                            result.message
+                        );
+
+
+                        return;
+
+                    }
+
+
+
+                    // ----------------------------------------
+                    // Today's count
+                    // ----------------------------------------
+
+
+                    document
+                        .getElementById(
+                            "todayCount"
+                        )
+                        .innerText =
+                            result.todayCount;
+
+
+
+                    // ----------------------------------------
+                    // Date
+                    // ----------------------------------------
+
+
+                    let formattedDate =
+                        result.date;
+
+
+                    try {
+
+                        const date =
+                            new Date(
+                                result.date +
+                                "T00:00:00"
+                            );
+
+
+                        formattedDate =
+                            date.toLocaleDateString(
+                                undefined,
+                                {
+                                    year:
+                                        "numeric",
+
+                                    month:
+                                        "long",
+
+                                    day:
+                                        "numeric"
+                                }
+                            );
+
+                    }
+
+                    catch (error) {
+
+                        console.log(
+                            "Date formatting error."
+                        );
+
+                    }
+
+
+
+                    document
+                        .getElementById(
+                            "todayDate"
+                        )
+                        .innerText =
+                            formattedDate;
+
+
+
+                    // ----------------------------------------
+                    // Recent scans
+                    // ----------------------------------------
+
+
+                    const recentContainer =
+                        document
+                            .getElementById(
+                                "recentScans"
+                            );
+
+
+                    recentContainer.innerHTML =
+                        "";
+
+
+
+                    if (
+
+                        !result.recentScans ||
+                        result.recentScans.length === 0
+
+                    ) {
+
+
+                        recentContainer.innerHTML =
+
+                            '<div class="no-recent">' +
+                            'No attendance recorded yet.' +
+                            '</div>';
+
+
+
+                        return;
+
+                    }
+
+
+
+                    result.recentScans
+                        .forEach(
+                            function(scan) {
+
+
+                                const item =
+                                    document
+                                        .createElement(
+                                            "div"
+                                        );
+
+
+                                item.className =
+                                    "recent-item";
+
+
+
+                                item.innerHTML =
+
+                                    '<div>' +
+
+                                        '<div class="recent-name">' +
+                                            escapeHtml(
+                                                scan.name
+                                            ) +
+                                        '</div>' +
+
+                                        '<div class="recent-id">' +
+                                            escapeHtml(
+                                                scan.id
+                                            ) +
+                                        '</div>' +
+
+                                    '</div>' +
+
+                                    '<div class="recent-time">' +
+                                        escapeHtml(
+                                            scan.time
+                                        ) +
+                                    '</div>';
+
+
+
+                                recentContainer
+                                    .appendChild(
+                                        item
+                                    );
+
+                            }
+                        );
+
+                }
+
+            )
+
+            .catch(
+                function(error) {
+
+                    console.error(
+                        "Could not load dashboard:",
+                        error
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        // ====================================================
+        // ESCAPE HTML
+        // ====================================================
+
+
+        function escapeHtml(value) {
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                value;
+
+
+            return div.innerHTML;
+
+        }
+
+
+
+        // ====================================================
+        // HIDE RESULT CARDS
+        // ====================================================
+
+
+        function hideResultCards() {
+
+
+            document
+                .getElementById(
+                    "successCard"
+                )
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById(
+                    "warningCard"
+                )
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById(
+                    "errorCard"
+                )
+                .style.display =
+                "none";
+
+        }
+
+
+
+        // ====================================================
+        // SUCCESS SOUND
+        // ====================================================
+
+
+        function playSuccessSound() {
 
 
             try {
 
-                const url =
-                    new URL(cleanQR);
+
+                const audioContext =
+                    new (
+                        window.AudioContext ||
+                        window.webkitAudioContext
+                    )();
 
 
-                extractedID =
-                    url.searchParams.get(
-                        "id"
-                    );
+
+                const oscillator =
+                    audioContext
+                        .createOscillator();
+
+
+                const gain =
+                    audioContext
+                        .createGain();
+
+
+
+                oscillator.frequency.value =
+                    880;
+
+
+                gain.gain.value =
+                    0.15;
+
+
+
+                oscillator.connect(
+                    gain
+                );
+
+
+                gain.connect(
+                    audioContext.destination
+                );
+
+
+
+                oscillator.start();
+
+
+                oscillator.stop(
+                    audioContext.currentTime +
+                    0.15
+                );
 
             }
 
             catch (error) {
 
-                console.error(
-                    "QR is not a valid URL:",
-                    error
+                console.log(
+                    "Sound unavailable."
+                );
+
+            }
+
+        }
+
+
+
+        // ====================================================
+        // WARNING SOUND
+        // ====================================================
+
+
+        function playWarningSound() {
+
+
+            try {
+
+
+                const audioContext =
+                    new (
+                        window.AudioContext ||
+                        window.webkitAudioContext
+                    )();
+
+
+
+                const oscillator =
+                    audioContext
+                        .createOscillator();
+
+
+                const gain =
+                    audioContext
+                        .createGain();
+
+
+
+                oscillator.frequency.value =
+                    440;
+
+
+                gain.gain.value =
+                    0.12;
+
+
+
+                oscillator.connect(
+                    gain
                 );
 
 
-                playErrorSound();
+                gain.connect(
+                    audioContext.destination
+                );
 
 
-                document.getElementById(
-                    "scanMessage"
-                ).innerHTML =
 
-                    '<div class="error-message">' +
-
-                    '<div class="error-icon">!</div>' +
-
-                    '<div class="error-title">' +
-                    'INVALID QR CODE' +
-                    '</div>' +
-
-                    '<div class="error-text">' +
-                    'This QR code is not a valid student QR code.' +
-                    '</div>' +
-
-                    '</div>';
+                oscillator.start();
 
 
-                return;
+                oscillator.stop(
+                    audioContext.currentTime +
+                    0.2
+                );
 
             }
 
+            catch (error) {
 
-            if (!extractedID) {
-
-                playErrorSound();
-
-
-                document.getElementById(
-                    "scanMessage"
-                ).innerHTML =
-
-                    '<div class="error-message">' +
-
-                    '<div class="error-icon">!</div>' +
-
-                    '<div class="error-title">' +
-                    'STUDENT ID NOT FOUND' +
-                    '</div>' +
-
-                    '<div class="error-text">' +
-                    'The QR code does not contain a student ID.' +
-                    '</div>' +
-
-                    '</div>';
-
-
-                return;
+                console.log(
+                    "Sound unavailable."
+                );
 
             }
 
-
-            document.getElementById(
-                "scanMessage"
-            ).innerText =
-
-                "QR detected.\n\n" +
-                "Student ID: " +
-                extractedID +
-                "\n\n" +
-                "Checking attendance...";
+        }
 
 
-            qrScanner.stop()
 
-                .then(function() {
+        // ====================================================
+        // ERROR SOUND
+        // ====================================================
+
+
+        function playErrorSound() {
+
+
+            try {
+
+
+                const audioContext =
+                    new (
+                        window.AudioContext ||
+                        window.webkitAudioContext
+                    )();
+
+
+
+                const oscillator =
+                    audioContext
+                        .createOscillator();
+
+
+                const gain =
+                    audioContext
+                        .createGain();
+
+
+
+                oscillator.frequency.value =
+                    220;
+
+
+                gain.gain.value =
+                    0.12;
+
+
+
+                oscillator.connect(
+                    gain
+                );
+
+
+                gain.connect(
+                    audioContext.destination
+                );
+
+
+
+                oscillator.start();
+
+
+                oscillator.stop(
+                    audioContext.currentTime +
+                    0.25
+                );
+
+            }
+
+            catch (error) {
+
+                console.log(
+                    "Sound unavailable."
+                );
+
+            }
+
+        }
+
+
+
+        // ====================================================
+        // GOOGLE SIGN-IN INITIALIZATION
+        // ====================================================
+
+
+        window.onload =
+            function() {
+
+
+                function renderGoogleButton() {
+
+
+                    if (
+                        !window.google ||
+                        !google.accounts ||
+                        !google.accounts.id
+                    ) {
+
+
+                        setTimeout(
+                            renderGoogleButton,
+                            300
+                        );
+
+
+                        return;
+
+                    }
+
+
+
+                    google.accounts.id.initialize({
+
+                        client_id:
+                            CLIENT_ID,
+
+                        callback:
+                            handleCredentialResponse
+
+                    });
+
+
+
+                    const button =
+                        document
+                            .getElementById(
+                                "googleButton"
+                            );
+
+
+                    button.innerHTML =
+                        "";
+
+
+
+                    google.accounts.id
+                        .renderButton(
+
+                            button,
+
+                            {
+
+                                theme:
+                                    "outline",
+
+                                size:
+                                    "large",
+
+                                text:
+                                    "signin_with",
+
+                                shape:
+                                    "rectangular",
+
+                                width:
+                                    280
+
+                            }
+
+                        );
+
+                }
+
+
+
+                renderGoogleButton();
+
+            };
+
+
+
+        // ====================================================
+        // LOGOUT
+        // ====================================================
+
+
+        function logout() {
+
+
+            // Stop scanner
+
+            if (scanner) {
+
+
+                try {
+
+                    scanner.stop();
+
+                }
+
+                catch (error) {
 
                     console.log(
-                        "Scanner stopped."
+                        "Scanner already stopped."
                     );
 
+                }
 
-                    sendAttendance(
-                        extractedID
-                    );
 
-                })
+                scanner =
+                    null;
 
-                .catch(function(error) {
+            }
 
-                    console.error(
-                        "Could not stop scanner:",
-                        error
-                    );
 
 
-                    sendAttendance(
-                        extractedID
-                    );
+            // Clear Google token
 
-                });
+            window.googleIdToken =
+                null;
 
-        },
 
 
-        function(errorMessage) {
+            // Hide scanner
 
-            // Normal scanning errors are ignored.
-
-        }
-
-    )
-
-    .catch(function(error) {
-
-        console.error(
-            "Camera error:",
-            error
-        );
-
-
-        playErrorSound();
-
-
-        document.getElementById(
-            "scanMessage"
-        ).innerHTML =
-
-            '<div class="error-message">' +
-
-            '<div class="error-icon">!</div>' +
-
-            '<div class="error-title">' +
-            'CAMERA ERROR' +
-            '</div>' +
-
-            '<div class="error-text">' +
-            'Unable to access the camera. Please allow camera access.' +
-            '</div>' +
-
-            '</div>';
-
-    });
-
-}
-
-
-
-/* =========================================================
-   SEND ATTENDANCE
-========================================================= */
-
-function sendAttendance(studentId) {
-
-
-    if (!googleIdToken) {
-
-        playErrorSound();
-
-
-        document.getElementById(
-            "scanMessage"
-        ).innerHTML =
-
-            '<div class="error-message">' +
-
-            '<div class="error-icon">!</div>' +
-
-            '<div class="error-title">' +
-            'SIGN-IN REQUIRED' +
-            '</div>' +
-
-            '<div class="error-text">' +
-            'Please sign in again before scanning.' +
-            '</div>' +
-
-            '</div>';
-
-
-        return;
-
-    }
-
-
-    fetch(
-
-        BACKEND_URL,
-
-        {
-
-            method: "POST",
-
-            headers: {
-
-                "Content-Type":
-                    "text/plain;charset=utf-8"
-
-            },
-
-            body: JSON.stringify({
-
-                studentId:
-                    studentId.trim(),
-
-                idToken:
-                    googleIdToken
-
-            })
-
-        }
-
-    )
-
-    .then(function(response) {
-
-        return response.json();
-
-    })
-
-    .then(function(result) {
-
-        console.log(
-            "Backend response:",
-            result
-        );
-
-
-        /* =================================================
-           SUCCESS
-        ================================================= */
-
-        if (result.success) {
-
-
-            playSuccessSound();
-
-
-            document.getElementById(
-                "scanMessage"
-            ).innerHTML =
-
-                '<div class="success-message">' +
-
-                '<div class="success-icon">✓</div>' +
-
-                '<div class="success-title">' +
-                'ATTENDANCE RECORDED' +
-                '</div>' +
-
-                '<div class="student-name">' +
-                result.student.name +
-                '</div>' +
-
-                '<div class="student-details">' +
-                result.student.course +
-                '<br>' +
-                result.student.year +
-                '</div>' +
-
-                '<div class="student-id">' +
-                'Student ID: <strong>' +
-                result.student.id +
-                '</strong>' +
-                '</div>' +
-
-                '<div class="attendance-time">' +
-                result.time +
-                '</div>' +
-
-                '</div>';
-
-        }
-
-
-        /* =================================================
-           DUPLICATE
-        ================================================= */
-
-        else if (
-
-            result.message &&
-
-            result.message
-                .toLowerCase()
-                .includes(
-                    "already marked present"
+            document
+                .getElementById(
+                    "scannerSection"
                 )
-
-        ) {
-
-
-            playDuplicateSound();
+                .style.display =
+                "none";
 
 
-            document.getElementById(
-                "scanMessage"
-            ).innerHTML =
 
-                '<div class="duplicate-message">' +
+            // Show login
 
-                '<div class="duplicate-icon">!</div>' +
+            document
+                .getElementById(
+                    "loginSection"
+                )
+                .style.display =
+                "block";
 
-                '<div class="duplicate-title">' +
-                'ALREADY RECORDED' +
-                '</div>' +
 
-                '<p class="duplicate-text">' +
 
-                'This student has already been marked ' +
-                'present today.' +
+            // Reset messages
 
-                '<br><br>' +
+            document
+                .getElementById(
+                    "scanMessage"
+                )
+                .innerText =
+                    "Point the camera at a student's QR code.";
 
-                '<strong>' +
-                'No additional attendance record was created.' +
-                '</strong>' +
 
-                '</p>' +
 
-                '</div>';
+            // Hide cards
+
+            hideResultCards();
+
+
+
+            // Clear dashboard
+
+            document
+                .getElementById(
+                    "todayCount"
+                )
+                .innerText =
+                "0";
+
+
+            document
+                .getElementById(
+                    "todayDate"
+                )
+                .innerText =
+                "Loading...";
+
+
+            document
+                .getElementById(
+                    "recentScans"
+                )
+                .innerHTML =
+
+                    '<div class="no-recent">' +
+                    'No attendance recorded yet.' +
+                    '</div>';
+
+
+
+            // Reset Google auto-selection
+
+            if (
+                window.google &&
+                google.accounts &&
+                google.accounts.id
+            ) {
+
+                google.accounts.id
+                    .disableAutoSelect();
+
+            }
+
+
+
+            // Re-render sign-in button
+
+            const button =
+                document
+                    .getElementById(
+                        "googleButton"
+                    );
+
+
+            button.innerHTML =
+                "";
+
+
+
+            function renderLogoutButton() {
+
+
+                if (
+                    !window.google ||
+                    !google.accounts ||
+                    !google.accounts.id
+                ) {
+
+                    setTimeout(
+                        renderLogoutButton,
+                        300
+                    );
+
+
+                    return;
+
+                }
+
+
+
+                google.accounts.id
+                    .renderButton(
+
+                        button,
+
+                        {
+
+                            theme:
+                                "outline",
+
+                            size:
+                                "large",
+
+                            text:
+                                "signin_with",
+
+                            shape:
+                                "rectangular",
+
+                            width:
+                                280
+
+                        }
+
+                    );
+
+            }
+
+
+
+            renderLogoutButton();
 
         }
 
 
-        /* =================================================
-           OTHER ERROR
-        ================================================= */
-
-        else {
-
-
-            playErrorSound();
-
-
-            document.getElementById(
-                "scanMessage"
-            ).innerHTML =
-
-                '<div class="error-message">' +
-
-                '<div class="error-icon">!</div>' +
-
-                '<div class="error-title">' +
-                'ATTENDANCE NOT RECORDED' +
-                '</div>' +
-
-                '<div class="error-text">' +
-                result.message +
-                '</div>' +
-
-                '</div>';
-
-        }
-
-
-        /* =================================================
-           RESTART SCANNER
-        ================================================= */
-
-        setTimeout(function() {
-
-
-            document.getElementById(
-                "scanMessage"
-            ).innerText =
-                "Ready to scan attendance.";
-
-
-            startScanner();
-
-
-        }, 2500);
-
-    })
-
-
-    .catch(function(error) {
-
-
-        console.error(
-            "Backend error:",
-            error
-        );
-
-
-        playErrorSound();
-
-
-        document.getElementById(
-            "scanMessage"
-        ).innerHTML =
-
-            '<div class="error-message">' +
-
-            '<div class="error-icon">!</div>' +
-
-            '<div class="error-title">' +
-            'SERVER ERROR' +
-            '</div>' +
-
-            '<div class="error-text">' +
-            'Unable to connect to the attendance server. Please try again.' +
-            '</div>' +
-
-            '</div>';
-
-
-        setTimeout(function() {
-
-
-            document.getElementById(
-                "scanMessage"
-            ).innerText =
-                "Ready to scan attendance.";
-
-
-            startScanner();
-
-
-        }, 2500);
-
-    });
-
-}
-
-
-
-/* =========================================================
-   GOOGLE BUTTON
-========================================================= */
-
-function renderGoogleButton() {
-
-
-    const button =
-        document.getElementById(
-            "googleButton"
-        );
-
-
-    if (!button) {
-
-        console.error(
-            "Google button container not found."
-        );
-
-        return;
-
-    }
-
-
-    button.innerHTML = "";
-
-
-    google.accounts.id.renderButton(
-
-        button,
-
-        {
-
-            theme: "outline",
-
-            size: "large",
-
-            text: "signin_with",
-
-            shape: "rectangular",
-
-            width: 280
-
-        }
-
-    );
-
-}
-
-
-
-/* =========================================================
-   INITIALIZE GOOGLE SIGN-IN
-========================================================= */
-
-window.onload = function() {
-
-
-    console.log(
-        "YES Attendance Scanner loaded."
-    );
-
-
-    if (
-
-        typeof google === "undefined" ||
-
-        !google.accounts ||
-
-        !google.accounts.id
-
-    ) {
-
-        console.error(
-            "Google Identity Services did not load."
-        );
-
-        return;
-
-    }
-
-
-    google.accounts.id.initialize({
-
-        client_id:
-            CLIENT_ID,
-
-        callback:
-            handleCredentialResponse
-
-    });
-
-
-    renderGoogleButton();
-
-};
-
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logout() {
-
-
-    if (qrScanner) {
-
-        qrScanner.stop()
-
-            .catch(function() {
-
-                // Scanner already stopped.
-
-            });
-
-    }
-
-
-    googleIdToken = null;
-
-
-    document.getElementById(
-        "scannerSection"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "loginSection"
-    ).style.display =
-        "block";
-
-
-    google.accounts.id.disableAutoSelect();
-
-
-    renderGoogleButton();
-
-}
-
-
-</script>
+    </script>
 
 
 </body>
+
 </html>
